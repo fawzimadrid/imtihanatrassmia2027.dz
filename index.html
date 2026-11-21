@@ -1,0 +1,2280 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الديوان الوطني للامتحانات والمسابقات | تسيير تسجيلات شهادة التعليم المتوسط 2027</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- SheetJS for Real Excel (.xlsx, .xls, .csv) Import/Export -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <!-- Google Fonts: Cairo & Tajawal -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Cairo', 'Tajawal', 'sans-serif'],
+                    },
+                    colors: {
+                        dzGreen: {
+                            DEFAULT: '#006233',
+                            dark: '#004825',
+                            light: '#e6f4ed',
+                            border: '#b3dec9'
+                        },
+                        dzRed: {
+                            DEFAULT: '#D21034',
+                            dark: '#a50c28',
+                            light: '#fce8ec'
+                        },
+                        floralGreen: {
+                            DEFAULT: '#2E9E5B',
+                            hover: '#25854B',
+                            border: '#237A45'
+                        },
+                        govSlate: '#f4f6f9'
+                    }
+                }
+            }
+        };
+    </script>
+
+    <style>
+        body {
+            font-family: 'Cairo', 'Tajawal', sans-serif;
+            background-color: #f4f6f9;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #006233;
+            border-radius: 4px;
+        }
+        @page {
+            size: A4 portrait;
+            margin: 10mm;
+        }
+        @media print {
+            html, body {
+                width: 210mm;
+                min-height: 297mm;
+                height: auto !important;
+                overflow: visible !important;
+                background: #ffffff !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            body > :not(#print-area) {
+                display: none !important;
+            }
+            #print-area, #print-area * {
+                visibility: visible !important;
+            }
+            #print-area {
+                display: block !important;
+                position: relative !important;
+                width: 100% !important;
+                max-width: 190mm !important;
+                margin: 0 auto !important;
+                padding: 0 !important;
+                background: #ffffff !important;
+                box-shadow: none !important;
+                overflow: visible !important;
+            }
+            #print-area #printable-document {
+                position: relative !important;
+                display: block !important;
+                width: 100% !important;
+                max-width: 190mm !important;
+                margin: 0 auto !important;
+                padding: 4mm !important;
+                box-shadow: none !important;
+                border: 1.5px solid #0f172a !important;
+                background: #ffffff !important;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+        }
+        .barcode-lines {
+            background: repeating-linear-gradient(
+                90deg,
+                #000,
+                #000 2px,
+                #fff 2px,
+                #fff 4px,
+                #000 4px,
+                #000 5px,
+                #fff 5px,
+                #fff 8px
+            );
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased selection:bg-dzGreen selection:text-white">
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed bottom-5 left-5 z-50 flex flex-col gap-2"></div>
+
+    <!-- Top Official Algerian Republic Banner -->
+    <header class="bg-white border-b-4 border-dzGreen shadow-sm sticky top-0 z-40">
+        <!-- Top Republic Strip -->
+        <div class="bg-dzGreen text-white py-1.5 px-4 text-xs sm:text-sm">
+            <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+                <div class="flex items-center gap-2 font-bold">
+                    <span class="inline-block w-3 h-3 rounded-full bg-white border-2 border-dzRed"></span>
+                    <span>الجمهورية الجزائرية الديمقراطية الشعبية</span>
+                    <span class="hidden md:inline text-emerald-200">|</span>
+                    <span class="hidden md:inline font-normal">وزارة التربية الوطنية</span>
+                </div>
+                <div class="flex items-center gap-4 text-emerald-100 text-xs">
+                    <span id="platform-status-badge" class="bg-emerald-800/80 px-2.5 py-0.5 rounded-full flex items-center gap-1.5 border border-emerald-500/40">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        المرحلة الأولى مفتوحة - الحفظ الآلي الدائم مفعل
+                    </span>
+                    <span class="hidden sm:inline"><i class="fa-regular fa-calendar ml-1"></i> السنة الدراسية: 2026 / 2027</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Header & Fixed Principal Role -->
+        <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col lg:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3.5 w-full lg:w-auto">
+                <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-gradient-to-br from-dzGreen to-dzGreen-dark text-white flex flex-col items-center justify-center shadow-md border-b-2 border-dzRed shrink-0">
+                    <span class="text-xs font-extrabold tracking-wider">ONEC</span>
+                    <i class="fa-solid fa-graduation-cap text-lg mt-0.5"></i>
+                </div>
+                <div>
+                    <h1 class="text-base sm:text-lg md:text-xl font-extrabold text-slate-900 leading-tight">
+                        الديوان الوطني للامتحانات والمسابقات
+                    </h1>
+                    <p class="text-xs sm:text-sm font-semibold text-dzGreen">
+                        نظام تسيير تسجيلات امتحان شهادة التعليم المتوسط (BEM) — دورة جوان 2027
+                    </p>
+                </div>
+            </div>
+
+            <!-- Fixed Principal Authority Badge (صلاحية مدير المؤسسة فقط) -->
+            <div class="flex items-center gap-3 bg-dzGreen-light/80 px-4 py-2.5 rounded-xl border border-dzGreen-border w-full lg:w-auto justify-between lg:justify-start">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-lg bg-dzGreen text-white flex items-center justify-center shadow-xs">
+                        <i class="fa-solid fa-user-tie text-base"></i>
+                    </div>
+                    <div>
+                        <span class="block text-[11px] font-bold text-slate-500">مستوى الصلاحية المخولة:</span>
+                        <span class="block text-xs sm:text-sm font-extrabold text-dzGreen-dark">مدير المؤسسة (رئيس المؤسسة التعليمية - المرحلة الأولى)</span>
+                    </div>
+                </div>
+                <span id="autosave-indicator" class="bg-white text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-lg text-[11px] font-bold flex items-center gap-1.5 shadow-2xs">
+                    <i class="fa-solid fa-cloud-check text-emerald-600"></i>
+                    <span>محفوظ آلياً (0)</span>
+                </span>
+            </div>
+        </div>
+
+        <!-- Active Entity Context Bar -->
+        <div class="bg-slate-50 border-t border-slate-200 py-2 px-4">
+            <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2 text-xs">
+                <div class="flex flex-wrap items-center gap-3">
+                    <span class="bg-dzGreen-light text-dzGreen font-bold px-2.5 py-1 rounded-md border border-dzGreen-border" id="entity-badge">
+                        <i class="fa-solid fa-school ml-1"></i> متوسطة الشهيد خالد مكتوي - سطاوالي (مديرية التربية للجزائر غرب)
+                    </span>
+                    <span class="text-slate-600 font-medium" id="role-permissions-desc">
+                        <i class="fa-solid fa-circle-info text-dzGreen ml-1"></i> المرحلة الأولى مفتوحة: استيراد إكسل، معالجة بيانات التلاميذ وتأكيدها مع ONEC، وإدارة مراكز الإجراء.
+                    </span>
+                </div>
+                <div class="text-slate-500 font-semibold">
+                    المسؤول: <span id="active-user-name" class="text-slate-800 font-bold">السيد مدير متوسطة الشهيد خالد مكتوي (سطاوالي)</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout Container -->
+    <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col lg:flex-row gap-6">
+
+        <!-- Sidebar Navigation -->
+        <aside class="w-full lg:w-64 shrink-0">
+            <nav class="bg-white rounded-2xl shadow-sm border border-slate-200 p-3 sticky top-36 space-y-1">
+                <div class="px-3 py-2 text-xs font-extrabold text-slate-400 uppercase tracking-wider">
+                    المرحلة الأولى (المفتوحة)
+                </div>
+                <button type="button" onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-bold transition-all bg-dzGreen text-white shadow-sm">
+                    <i class="fa-solid fa-chart-pie w-5 text-center"></i>
+                    <span>لوحة القيادة والإحصائيات</span>
+                </button>
+                <button type="button" onclick="switchTab('candidates')" id="nav-candidates" class="nav-btn w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-100 transition-all">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-users w-5 text-center text-dzGreen"></i>
+                        <span>تسيير المترشحين</span>
+                    </div>
+                    <span id="nav-count-badge" class="bg-slate-200 text-slate-700 text-xs px-2 py-0.5 rounded-full">0</span>
+                </button>
+                <button type="button" onclick="switchTab('audit')" id="nav-audit" class="nav-btn w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-100 transition-all">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-file-circle-check w-5 text-center text-amber-600"></i>
+                        <span>مراقبة الملفات والمصادقة</span>
+                    </div>
+                    <span id="nav-pending-badge" class="bg-amber-100 text-amber-800 text-xs px-2 py-0.5 rounded-full">0</span>
+                </button>
+                <button type="button" onclick="switchTab('centers')" id="nav-centers" class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-100 transition-all">
+                    <i class="fa-solid fa-building-columns w-5 text-center text-blue-600"></i>
+                    <span>مراكز الإجراء والتوزيع</span>
+                </button>
+                <button type="button" onclick="switchTab('settings')" id="nav-settings" class="nav-btn w-full flex items-center gap-3 px-3.5 py-3 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-100 transition-all">
+                    <i class="fa-solid fa-scale-balanced w-5 text-center text-slate-600"></i>
+                    <span>الرزنامة القانونية والإعدادات</span>
+                </button>
+
+                <div class="px-3 pt-3 pb-1 text-[11px] font-extrabold text-slate-400 border-t border-slate-100 mt-2">
+                    المراحل اللاحقة (مغلقة حالياً)
+                </div>
+                <button type="button" onclick="switchTab('documents')" id="nav-documents" class="nav-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-bold text-slate-400 bg-slate-50/80 hover:bg-slate-100 transition-all">
+                    <div class="flex items-center gap-2.5">
+                        <i class="fa-solid fa-lock w-4 text-center text-slate-400"></i>
+                        <span>الوثائق والاستدعاءات</span>
+                    </div>
+                    <span class="text-[10px] font-extrabold bg-slate-200 text-slate-600 px-2 py-0.5 rounded-full">مغلق</span>
+                </button>
+
+                <!-- Quick Official Action Box -->
+                <div class="mt-4 pt-4 border-t border-slate-100">
+                    <div class="bg-dzGreen-light/70 border border-dzGreen-border rounded-xl p-3">
+                        <p class="text-xs font-bold text-dzGreen mb-1.5"><i class="fa-solid fa-file-excel ml-1"></i> استيراد قائمة التلاميذ</p>
+                        <p class="text-[11px] text-slate-600 mb-2.5 leading-relaxed">استيراد بيانات تلاميذ متوسطة الشهيد خالد مكتوي من ملف إكسل وحفظها آلياً.</p>
+                        <button type="button" onclick="openExcelImportModal()" class="w-full py-2 px-3 bg-floralGreen hover:bg-floralGreen-hover text-white text-xs font-bold rounded-lg transition shadow-sm flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-file-excel"></i>
+                            <span>استيراد بيانات إكسل</span>
+                        </button>
+                    </div>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Dynamic Content Area -->
+        <main class="flex-1 min-w-0">
+
+            <!-- TAB 1: DASHBOARD -->
+            <section id="tab-dashboard" class="tab-section space-y-6">
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h2 class="text-lg sm:text-xl font-extrabold text-slate-900">لوحة القيادة والمتابعة الآنية — المرحلة الأولى</h2>
+                        <p class="text-xs sm:text-sm text-slate-500 mt-1">متوسطة الشهيد خالد مكتوي (سطاوالي) — امتحان شهادة التعليم المتوسط دورة جوان 2027</p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" onclick="openExcelImportModal()" class="px-4 py-2.5 bg-floralGreen hover:bg-floralGreen-hover text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm transition flex items-center gap-2">
+                            <i class="fa-solid fa-file-excel"></i>
+                            <span>استيراد بيانات إكسل (Excel)</span>
+                        </button>
+                        <button type="button" onclick="exportExcelFile()" class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 text-xs sm:text-sm font-bold rounded-xl border border-slate-300 transition flex items-center gap-2">
+                            <i class="fa-solid fa-download text-floralGreen"></i>
+                            <span>تصدير القائمة (Excel)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KPI Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 border-r-4 border-r-dzGreen">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-bold text-slate-500">إجمالي التلاميذ المستوردين</p>
+                                <h3 id="kpi-total" class="text-3xl font-black text-slate-900 mt-1">0</h3>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-dzGreen-light text-dzGreen flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-users"></i>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex items-center gap-2 text-xs font-semibold text-slate-600">
+                            <span id="kpi-school-vs-free">متمدرسون: 0 | أحرار/عن بعد: 0</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 border-r-4 border-r-emerald-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-bold text-slate-500">المؤكدة من الديوان (ONEC)</p>
+                                <h3 id="kpi-validated" class="text-3xl font-black text-emerald-700 mt-1">0</h3>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-check-double"></i>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex items-center gap-2 text-xs font-semibold text-emerald-700">
+                            <span id="kpi-validated-pct">نسبة التأكيد: 0%</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 border-r-4 border-r-amber-500">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-bold text-slate-500">قيد المعالجة أو نقص وثائق</p>
+                                <h3 id="kpi-pending" class="text-3xl font-black text-amber-600 mt-1">0</h3>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-hourglass-half"></i>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex items-center gap-2 text-xs font-semibold text-amber-700">
+                            <span id="kpi-rejected-count">قيد المعالجة: 0 | نقص وثائق: 0</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 border-r-4 border-r-blue-600">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <p class="text-xs font-bold text-slate-500">مراكز الإجراء المسجلة</p>
+                                <h3 id="kpi-centers-count" class="text-3xl font-black text-blue-700 mt-1">0</h3>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-building-columns"></i>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex items-center gap-2 text-xs font-semibold text-slate-600">
+                            <span id="kpi-paid-details">تسديد الحقوق: 0%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Breakdowns -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
+                        <h3 class="text-base font-extrabold text-slate-800 mb-4 flex items-center gap-2">
+                            <i class="fa-solid fa-chart-bar text-dzGreen"></i>
+                            <span>توزيع التلاميذ حسب الصفة ومؤسسة الإجراء والحالات الخاصة</span>
+                        </h3>
+                        <div class="space-y-4" id="dashboard-bars"></div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-base font-extrabold text-slate-800 mb-4 flex items-center gap-2">
+                                <i class="fa-solid fa-bullhorn text-dzRed"></i>
+                                <span>تعليمات ومناشير الديوان الوطني للامتحانات والمسابقات</span>
+                            </h3>
+                            <div class="space-y-3 text-xs sm:text-sm">
+                                <div class="p-3 rounded-xl bg-slate-50 border-r-4 border-dzGreen">
+                                    <div class="font-bold text-slate-900">المنشور الوزاري رقم 27/و.ت.و/أ.ع المؤرخ في أكتوبر 2026</div>
+                                    <p class="text-slate-600 mt-1">يتعلق بترتيبات تسجيل المترشحين المتمدرسين والأحرار لامتحان شهادة التعليم المتوسط دورة جوان 2027.</p>
+                                </div>
+                                <div class="p-3 rounded-xl bg-slate-50 border-r-4 border-amber-500">
+                                    <div class="font-bold text-slate-900">مراقبة الرقم التعريفي الوطني (NIN) والحالة المدنية</div>
+                                    <p class="text-slate-600 mt-1">يجب مطابقة اللقب والاسم وتاريخ ومكان الميلاد بدقة مع عقد الميلاد وتأكيدها لدى الديوان الوطني للامتحانات والمسابقات (ONEC).</p>
+                                </div>
+                                <div class="p-3 rounded-xl bg-slate-50 border-r-4 border-blue-600">
+                                    <div class="font-bold text-slate-900">تعيين مؤسسات الإجراء (مراكز الامتحان)</div>
+                                    <p class="text-slate-600 mt-1">إدخال مراكز الإجراء المعتمدة وحفظها آلياً وتعيين مؤسسة الإجراء لكل مترشح بدقة.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-xs text-slate-500">
+                            <span>متوسطة الشهيد خالد مكتوي - سطاوالي</span>
+                            <span class="font-bold text-dzGreen">المرجع: الدليل الإجرائي BEM-2027</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: CANDIDATES MANAGEMENT -->
+            <section id="tab-candidates" class="tab-section hidden space-y-5">
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5">
+                        <div>
+                            <h2 class="text-lg font-extrabold text-slate-900">سجل تلاميذ متوسطة الشهيد خالد مكتوي (سطاوالي) — BEM 2027</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">استيراد من ملف إكسل، معالجة بيانات التلميذ (4 بيانات في الصف)، وتأكيدها من طرف الديوان الوطني للامتحانات والمسابقات (ONEC)</p>
+                        </div>
+                        <button type="button" onclick="openExcelImportModal()" class="px-4 py-2.5 bg-floralGreen hover:bg-floralGreen-hover text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm transition flex items-center gap-2 shrink-0">
+                            <i class="fa-solid fa-file-excel text-base"></i>
+                            <span>استيراد بيانات إكسل (Excel)</span>
+                        </button>
+                    </div>
+
+                    <!-- Search & Filters -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200 mb-5">
+                        <div class="lg:col-span-2 relative">
+                            <i class="fa-solid fa-magnifying-glass absolute right-3.5 top-3 text-slate-400 text-sm"></i>
+                            <input type="text" id="search-input" onkeyup="resetPageAndRender()" placeholder="بحث باللقب، الاسم، رقم التسجيل، أو الرقم الوطني (NIN)..." class="w-full pr-10 pl-3 py-2 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-dzGreen">
+                        </div>
+                        <div>
+                            <select id="filter-type" onchange="resetPageAndRender()" class="w-full py-2 px-3 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-dzGreen">
+                                <option value="ALL">كل الصفات (متمدرس / حر)</option>
+                                <option value="متمدرس">متمدرس (4AM)</option>
+                                <option value="حر">مترشح حر</option>
+                                <option value="ONEFD">تعليم عن بعد (ONEFD)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select id="filter-status" onchange="resetPageAndRender()" class="w-full py-2 px-3 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-dzGreen">
+                                <option value="ALL">كل حالات التأكيد</option>
+                                <option value="مؤكد من طرف الديوان ONEC">مؤكد من طرف الديوان ONEC</option>
+                                <option value="قيد المعالجة">قيد المعالجة</option>
+                                <option value="نقص وثائق">مرفوض / نقص وثائق</option>
+                            </select>
+                        </div>
+                        <div>
+                            <select id="filter-center" onchange="resetPageAndRender()" class="w-full py-2 px-3 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-dzGreen">
+                                <option value="ALL">كل مؤسسات الإجراء</option>
+                                <option value="ASSIGNED">معيّنة مؤسسة الإجراء</option>
+                                <option value="UNASSIGNED">غير معيّنة بعد</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Responsive Data Table -->
+                    <div class="overflow-x-auto rounded-xl border border-slate-200">
+                        <table class="w-full text-right border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 text-xs font-extrabold border-b border-slate-200">
+                                    <th class="py-3.5 px-3">رقم التسجيل / NIN</th>
+                                    <th class="py-3.5 px-3">اللقب والاسم</th>
+                                    <th class="py-3.5 px-3">تاريخ ومكان الميلاد</th>
+                                    <th class="py-3.5 px-3">مؤسسة الإجراء (مركز الامتحان)</th>
+                                    <th class="py-3.5 px-3">الأمازيغية / ت.البدنية</th>
+                                    <th class="py-3.5 px-3">حقوق التسجيل</th>
+                                    <th class="py-3.5 px-3">حالة التأكيد (ONEC)</th>
+                                    <th class="py-3.5 px-3 text-center">معالجة وتأكيد</th>
+                                </tr>
+                            </thead>
+                            <tbody id="candidates-tbody" class="divide-y divide-slate-200 text-xs sm:text-sm bg-white"></tbody>
+                        </table>
+                    </div>
+
+                    <!-- Empty Table State -->
+                    <div id="empty-table-msg" class="hidden py-12 px-4 text-center text-slate-600 bg-slate-50/70 rounded-b-xl border-x border-b border-slate-200">
+                        <i class="fa-solid fa-file-excel text-4xl mb-3 text-floralGreen"></i>
+                        <p class="font-extrabold text-base text-slate-800">قائمة التلاميذ فارغة حالياً.</p>
+                        <p class="text-xs text-slate-500 mt-1 mb-4">يرجى استيراد بيانات التلاميذ من ملف الإكسل الخاص بك (.xlsx / .xls / .csv) ليتم عرضها وتقسيمها إلى صفحات (15 تلميذاً في كل صفحة).</p>
+                        <button type="button" onclick="openExcelImportModal()" class="px-5 py-2.5 bg-floralGreen hover:bg-floralGreen-hover text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm transition inline-flex items-center gap-2">
+                            <i class="fa-solid fa-file-excel"></i>
+                            <span>استيراد بيانات إكسل (Excel)</span>
+                        </button>
+                    </div>
+
+                    <!-- Pagination Controls (15 items per page + Previous/Next) -->
+                    <div id="pagination-controls" class="mt-4 pt-4 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-3 text-xs sm:text-sm">
+                        <div class="font-bold text-slate-600" id="pagination-info">عرض 0 إلى 0 من أصل 0 تلميذ</div>
+                        <div class="flex items-center gap-1.5" id="pagination-buttons"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: AUDIT & VALIDATION WORKFLOW -->
+            <section id="tab-audit" class="tab-section hidden space-y-5">
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-5">
+                        <div>
+                            <h2 class="text-lg font-extrabold text-slate-900">مراقبة الملفات الإدارية وتأكيدها مع ONEC</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">التدقيق في الوثائق الثبوتية وتأكيد بيانات التلاميذ وحفظها آلياً</p>
+                        </div>
+                        <button type="button" onclick="bulkValidatePending()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-2">
+                            <i class="fa-solid fa-check-double"></i>
+                            <span>تأكيد جماعي للملفات المستوفاة</span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-1 border border-slate-200 rounded-xl overflow-hidden flex flex-col max-h-[600px]">
+                            <div class="bg-slate-100 px-4 py-3 border-b border-slate-200 font-bold text-xs text-slate-700 flex justify-between">
+                                <span>قائمة الملفات للمعالجة</span>
+                                <span id="audit-list-count" class="text-dzGreen">0 ملف</span>
+                            </div>
+                            <div id="audit-candidates-list" class="divide-y divide-slate-100 overflow-y-auto flex-1 bg-white"></div>
+                        </div>
+
+                        <div class="lg:col-span-2 border border-slate-200 rounded-xl p-5 bg-slate-50/60" id="audit-detail-panel"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 4: EXAM CENTERS MANAGEMENT & ALLOCATION -->
+            <section id="tab-centers" class="tab-section hidden space-y-5">
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
+                    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-5">
+                        <div>
+                            <h2 class="text-lg font-extrabold text-slate-900">إدارة مراكز الإجراء وتعيين مؤسسة الإجراء للتلاميذ</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">متوسطة الشهيد خالد مكتوي (سطاوالي) — إضافة مراكز إجراء متعددة وحفظها آلياً وتعيينها للتلاميذ</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                            <select id="bulk-exam-center-select" class="px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs sm:text-sm font-bold text-slate-800 flex-1 sm:w-72 focus:outline-none focus:ring-2 focus:ring-blue-600"></select>
+                            <button type="button" onclick="assignCustomExamCenterToAll()" class="px-4 py-2.5 bg-blue-700 hover:bg-blue-800 text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm transition flex items-center gap-2 shrink-0">
+                                <i class="fa-solid fa-building-circle-check"></i>
+                                <span>تعيين المركز للجميع</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Dedicated Place to Add & Manage Multiple Exam Centers -->
+                    <div class="bg-blue-50/50 border border-blue-200 rounded-2xl p-4 sm:p-5 mb-6">
+                        <div class="flex flex-wrap justify-between items-center gap-2 mb-3">
+                            <h3 class="text-sm font-extrabold text-blue-950 flex items-center gap-2">
+                                <i class="fa-solid fa-square-plus text-blue-700"></i>
+                                <span>مكان إضافة وإدارة مراكز الإجراء المتعددة (محفوظة آلياً)</span>
+                            </h3>
+                            <span id="centers-total-badge" class="text-xs font-extrabold bg-blue-100 text-blue-800 px-3 py-1 rounded-full">0 مركز إجراء</span>
+                        </div>
+
+                        <form id="add-exam-center-form" onsubmit="addNewExamCenter(event)" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">رمز المركز (اختياري)</label>
+                                <input type="text" id="new-center-code" placeholder="مثال: 1645" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-mono focus:ring-2 focus:ring-blue-600 focus:outline-none">
+                            </div>
+                            <div class="sm:col-span-2">
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">اسم مؤسسة الإجراء / مركز الامتحان *</label>
+                                <input type="text" id="new-center-name" required placeholder="مثال: متوسطة الإخوة بوعلام - سطاوالي" class="w-full px-3 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-bold focus:ring-2 focus:ring-blue-600 focus:outline-none">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-700 mb-1">السعة / عدد الحجرات</label>
+                                <div class="flex gap-2">
+                                    <input type="number" id="new-center-capacity" min="20" max="2000" value="240" title="السعة الإجمالية" class="w-1/2 px-2.5 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-mono focus:ring-2 focus:ring-blue-600 focus:outline-none">
+                                    <input type="number" id="new-center-rooms" min="1" max="100" value="12" title="عدد الحجرات" class="w-1/2 px-2.5 py-2 bg-white border border-slate-300 rounded-xl text-xs sm:text-sm font-mono focus:ring-2 focus:ring-blue-600 focus:outline-none">
+                                </div>
+                            </div>
+                            <div class="flex items-end">
+                                <button type="submit" class="w-full py-2 px-4 bg-dzGreen hover:bg-dzGreen-dark text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm transition flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-plus"></i>
+                                    <span>إضافة المركز</span>
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Bulk Paste Multiple Centers at Once -->
+                        <div class="bg-white/90 border border-slate-200 rounded-xl p-3">
+                            <label class="block text-[11px] font-extrabold text-slate-700 mb-1.5">
+                                <i class="fa-solid fa-layer-group text-dzGreen ml-1"></i>
+                                إضافة عدة مراكز دفعة واحدة (كل مركز في سطر مستقل):
+                            </label>
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <textarea id="bulk-centers-textarea" rows="2" placeholder="مثال:&#10;ثانوية سطاوالي الجديدة - سطاوالي&#10;متوسطة الشهيد خالد مكتوي - سطاوالي&#10;متوسطة عين البنيان - الجزائر غرب" class="flex-1 px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-xs font-semibold focus:ring-2 focus:ring-blue-600 focus:outline-none"></textarea>
+                                <button type="button" onclick="addBulkExamCenters()" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center justify-center gap-1.5 shrink-0">
+                                    <i class="fa-solid fa-file-import"></i>
+                                    <span>إدراج الكل</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Exam Centers Overview Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6" id="centers-cards-grid"></div>
+
+                    <!-- Allocated Candidates List -->
+                    <div class="overflow-x-auto rounded-xl border border-slate-200">
+                        <table class="w-full text-right border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 text-slate-700 text-xs font-extrabold border-b border-slate-200">
+                                    <th class="py-3 px-3">رقم التسجيل</th>
+                                    <th class="py-3 px-3">المترشح</th>
+                                    <th class="py-3 px-3">الصفة</th>
+                                    <th class="py-3 px-3">مؤسسة الإجراء المعيّنة</th>
+                                    <th class="py-3 px-3">رقم الحجرة</th>
+                                    <th class="py-3 px-3">حالة التأكيد (ONEC)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="centers-tbody" class="divide-y divide-slate-200 text-xs sm:text-sm bg-white"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: LOCKED STAGE 2 PLACEHOLDER -->
+            <section id="tab-documents" class="tab-section hidden space-y-5">
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 text-center space-y-4">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center text-2xl mx-auto">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-extrabold text-slate-900">المرحلة الثانية (الوثائق والاستدعاءات) مغلقة حالياً</h2>
+                        <p class="text-xs sm:text-sm text-slate-600 mt-1 max-w-xl mx-auto">
+                            المرحلة المفتوحة حالياً هي <strong>المرحلة الأولى (استيراد ملف الإكسل، معالجة وتأكيد بيانات التلاميذ، وإدارة مراكز الإجراء)</strong>.
+                        </p>
+                    </div>
+                    <button type="button" onclick="switchTab('candidates')" class="px-5 py-2.5 bg-dzGreen hover:bg-dzGreen-dark text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm transition inline-flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-right"></i>
+                        <span>العودة إلى المرحلة الأولى (تسيير المترشحين)</span>
+                    </button>
+                </div>
+            </section>
+
+            <!-- TAB 6: LEGAL CALENDAR & SETTINGS -->
+            <section id="tab-settings" class="tab-section hidden space-y-5">
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-5">
+                        <div>
+                            <h2 class="text-lg font-extrabold text-slate-900">الرزنامة القانونية وحالة المراحل — دورة جوان 2027</h2>
+                            <p class="text-xs text-slate-500 mt-0.5">متوسطة الشهيد خالد مكتوي (سطاوالي) — المرحلة الأولى فقط هي المفتوحة حالياً</p>
+                        </div>
+                        <div class="flex items-center gap-3 bg-slate-100 px-4 py-2 rounded-xl border border-slate-200">
+                            <span class="text-xs font-bold text-slate-700">حالة المرحلة الأولى:</span>
+                            <button type="button" onclick="togglePlatformStatus()" id="btn-toggle-platform" class="px-3 py-1.5 bg-dzGreen text-white text-xs font-bold rounded-lg transition">
+                                مفتوحة للمعالجة
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-xl border-2 border-emerald-500 bg-emerald-50/40">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-extrabold bg-emerald-600 text-white px-2.5 py-0.5 rounded-full">المرحلة 01 - مفتوحة حالياً</span>
+                                <span class="text-xs font-bold text-slate-500">نشطة</span>
+                            </div>
+                            <h4 class="font-extrabold text-slate-900 text-sm">استيراد ملف الإكسل ومعالجة وتأكيد بيانات التلاميذ ومراكز الإجراء</h4>
+                            <p class="text-xs text-slate-600 mt-1">استيراد قوائم المتمدرسين من إكسل، معالجة بيانات التلميذ وتأكيدها مع الديوان الوطني للامتحانات والمسابقات (ONEC)، وإدارة مراكز الإجراء.</p>
+                        </div>
+
+                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-100/80 opacity-75">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-extrabold bg-slate-500 text-white px-2.5 py-0.5 rounded-full"><i class="fa-solid fa-lock ml-1"></i> المرحلة 02 - مغلقة</span>
+                                <span class="text-xs font-bold text-slate-500">مغلقة حالياً</span>
+                            </div>
+                            <h4 class="font-extrabold text-slate-700 text-sm">مراجعة الملفات النهائية وطبع الاستمارات الرسمية</h4>
+                            <p class="text-xs text-slate-500 mt-1">مغلقة حالياً لأن العمل مقتصر على المرحلة الأولى فقط.</p>
+                        </div>
+
+                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-100/80 opacity-75">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-extrabold bg-slate-500 text-white px-2.5 py-0.5 rounded-full"><i class="fa-solid fa-lock ml-1"></i> المرحلة 03 - مغلقة</span>
+                                <span class="text-xs font-bold text-slate-500">مغلقة حالياً</span>
+                            </div>
+                            <h4 class="font-extrabold text-slate-700 text-sm">التربية البدنية وسحب الاستدعاءات</h4>
+                            <p class="text-xs text-slate-500 mt-1">مغلقة حالياً لحين استكمال المرحلة الأولى.</p>
+                        </div>
+
+                        <div class="p-4 rounded-xl border border-slate-200 bg-slate-100/80 opacity-75">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-xs font-extrabold bg-slate-500 text-white px-2.5 py-0.5 rounded-full"><i class="fa-solid fa-lock ml-1"></i> المرحلة 04 - مغلقة</span>
+                                <span class="text-xs font-bold text-slate-500">مغلقة حالياً</span>
+                            </div>
+                            <h4 class="font-extrabold text-slate-700 text-sm">إجراء اختبارات شهادة التعليم المتوسط (جوان 2027)</h4>
+                            <p class="text-xs text-slate-500 mt-1">مغلقة حالياً لحين استكمال المراحل السابقة.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Dedicated Print Area for A4 Official Documents -->
+    <div id="print-area" class="hidden">
+        <div id="printable-document" class="bg-white w-full max-w-[820px] mx-auto p-6 sm:p-10 shadow-lg border border-slate-300 text-slate-900"></div>
+    </div>
+
+    <!-- MODAL: EXCEL IMPORT (إستيراد بيانات إكسل) -->
+    <div id="excel-import-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-xl w-full shadow-2xl border border-slate-200 overflow-hidden my-8">
+            <div class="bg-floralGreen text-white px-6 py-4 flex justify-between items-center">
+                <h3 class="text-base sm:text-lg font-extrabold flex items-center gap-2">
+                    <i class="fa-solid fa-file-excel"></i>
+                    <span>استيراد قوائم التلاميذ من ملف إكسل (Excel)</span>
+                </h3>
+                <button type="button" onclick="closeExcelImportModal()" class="text-white/80 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <div class="p-6 space-y-5">
+                <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 text-xs text-slate-700 leading-relaxed">
+                    <p class="font-extrabold text-floralGreen mb-1"><i class="fa-solid fa-circle-info ml-1"></i> تعليمات الاستيراد الرسمي:</p>
+                    <p>يدعم النظام استيراد ملفات إكسل بصيغ <strong>(.xlsx / .xls / .csv)</strong> لإدراج التلاميذ مباشرة في الجدول وحفظهم آلياً في المتصفح وتقسيمهم إلى 15 تلميذاً في كل صفحة.</p>
+                </div>
+
+                <div class="border-2 border-dashed border-floralGreen/60 bg-slate-50 hover:bg-emerald-50/40 transition rounded-2xl p-6 text-center">
+                    <i class="fa-solid fa-file-arrow-up text-4xl text-floralGreen mb-3"></i>
+                    <p class="text-sm font-extrabold text-slate-800 mb-1">اختر ملف إكسل (Excel) من جهازك</p>
+                    <p class="text-xs text-slate-500 mb-4">الأعمدة المدعومة: اللقب، الاسم، تاريخ الميلاد، مكان الميلاد، الرقم الوطني NIN، اسم الأب، اسم الأم، المؤسسة</p>
+                    <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" onchange="handleExcelFileUpload(event)" class="hidden">
+                    <div class="flex flex-wrap justify-center gap-3">
+                        <button type="button" onclick="document.getElementById('excel-file-input').click()" class="px-5 py-2.5 bg-floralGreen hover:bg-floralGreen-hover text-white text-xs sm:text-sm font-bold rounded-xl shadow-sm transition flex items-center gap-2">
+                            <i class="fa-solid fa-folder-open"></i>
+                            <span>تصفح واختيار ملف إكسل</span>
+                        </button>
+                        <button type="button" onclick="downloadExcelTemplate()" class="px-4 py-2.5 bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 text-xs sm:text-sm font-bold rounded-xl transition flex items-center gap-2">
+                            <i class="fa-solid fa-file-arrow-down text-floralGreen"></i>
+                            <span>تحميل نموذج إكسل فارغ</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="border-t border-slate-200 pt-4 flex flex-col sm:flex-row justify-between items-center gap-3">
+                    <span class="text-xs text-slate-500 font-semibold">يتم حفظ جميع البيانات المستوردة تلقائياً ونهائياً في المنصة.</span>
+                    <button type="button" onclick="clearAllCandidatesData()" class="px-4 py-2 bg-red-50 hover:bg-red-100 text-dzRed border border-red-200 text-xs font-bold rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-trash-can"></i>
+                        <span>إفراغ قاعدة البيانات المحفوظة</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EDIT & PROCESS CANDIDATE DATA (WIDE 4-COLUMNS GRID) -->
+    <div id="candidate-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden items-center justify-center p-3 sm:p-5 overflow-y-auto">
+        <div class="bg-white rounded-2xl max-w-6xl w-[95%] shadow-2xl border border-slate-200 overflow-hidden my-6">
+            <div class="bg-dzGreen text-white px-6 py-4 flex justify-between items-center">
+                <h3 id="modal-title" class="text-base sm:text-lg font-extrabold flex items-center gap-2">
+                    <i class="fa-solid fa-user-pen"></i>
+                    <span>معالجة وتحديث بيانات التلميذ — متوسطة الشهيد خالد مكتوي (سطاوالي)</span>
+                </h3>
+                <button type="button" onclick="closeCandidateModal()" class="text-white/80 hover:text-white text-xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <form id="candidate-form" onsubmit="saveCandidate(event)" class="p-5 sm:p-6 space-y-5 max-h-[84vh] overflow-y-auto">
+                <input type="hidden" id="edit-candidate-id">
+
+                <!-- Section 1: Civil Status (4 items per row) -->
+                <div>
+                    <h4 class="text-xs font-extrabold text-dzGreen uppercase tracking-wider border-b border-slate-200 pb-1.5 mb-3">
+                        1. المعلومات الشخصية للتلميذ (مطابقة لعقد الميلاد)
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">الرقم التعريفي الوطني (NIN) *</label>
+                            <input type="text" id="form-nin" maxlength="18" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-mono focus:ring-2 focus:ring-dzGreen focus:outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">الجنس *</label>
+                            <select id="form-gender" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-dzGreen">
+                                <option value="ذكر">ذكر</option>
+                                <option value="أنثى">أنثى</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">اللقب (بالعربية) *</label>
+                            <input type="text" id="form-lastname-ar" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-dzGreen">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">الاسم (بالعربية) *</label>
+                            <input type="text" id="form-firstname-ar" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-dzGreen">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">اللقب (باللاتينية - NOM) *</label>
+                            <input type="text" id="form-lastname-fr" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm uppercase font-mono focus:ring-2 focus:ring-dzGreen">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">الاسم (باللاتينية - PRÉNOM) *</label>
+                            <input type="text" id="form-firstname-fr" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm uppercase font-mono focus:ring-2 focus:ring-dzGreen">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">تاريخ الميلاد *</label>
+                            <input type="date" id="form-dob" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-dzGreen">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">بلدية وولاية الميلاد *</label>
+                            <input type="text" id="form-pob" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-dzGreen">
+                        </div>
+                        <div class="sm:col-span-2 lg:col-span-4">
+                            <label class="block text-xs font-bold text-slate-700 mb-1">العنوان الشخصي الكامل *</label>
+                            <input type="text" id="form-address" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-dzGreen">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Parents Info (4 items per row) -->
+                <div>
+                    <h4 class="text-xs font-extrabold text-dzGreen uppercase tracking-wider border-b border-slate-200 pb-1.5 mb-3">
+                        2. معلومات الأولياء والحالة العائلية
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">اسم الأب *</label>
+                            <input type="text" id="form-father-name" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-dzGreen">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">مهنة الأب</label>
+                            <input type="text" id="form-father-job" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-dzGreen">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">لقب واسم الأم *</label>
+                            <input type="text" id="form-mother-name" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-dzGreen">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">مهنة الأم</label>
+                            <input type="text" id="form-mother-job" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-dzGreen">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">رقم هاتف الولي الشرعي *</label>
+                            <input type="text" id="form-parent-phone" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-mono focus:ring-2 focus:ring-dzGreen">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">رقم القيد في سجل الدخول</label>
+                            <input type="text" id="form-reg-book" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-mono focus:ring-2 focus:ring-dzGreen">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">المؤسسة التعليمية الأصلية *</label>
+                            <input type="text" id="form-school" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-bold text-slate-800 bg-slate-50 focus:ring-2 focus:ring-dzGreen">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">القسم / الفوج التربوي</label>
+                            <input type="text" id="form-class" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:ring-2 focus:ring-dzGreen">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Schooling, Exam Center & Confirmation (4 items per row) -->
+                <div>
+                    <h4 class="text-xs font-extrabold text-dzGreen uppercase tracking-wider border-b border-slate-200 pb-1.5 mb-3">
+                        3. التفصيل الدراسي ومؤسسة الإجراء والتأكيد النهائي (ONEC)
+                    </h4>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">صفة المترشح *</label>
+                            <select id="form-type" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-dzGreen">
+                                <option value="متمدرس">متمدرس (السنة الرابعة متوسط)</option>
+                                <option value="حر">مترشح حر</option>
+                                <option value="ONEFD">الديوان الوطني للتعليم والتكوين عن بعد (ONEFD)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">مديرية التربية / المقاطعة *</label>
+                            <input type="text" id="form-wilaya" required value="مديرية التربية للجزائر غرب - سطاوالي" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-dzGreen">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">وضعية اللغة الأمازيغية *</label>
+                            <select id="form-amazigh" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-dzGreen">
+                                <option value="غير معني">غير معني / معفى</option>
+                                <option value="معني">معني بالاختبار</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">التربية البدنية والرياضية *</label>
+                            <select id="form-sport" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-semibold focus:ring-2 focus:ring-dzGreen">
+                                <option value="كفء">كفء (يمارس التربية البدنية)</option>
+                                <option value="معفى بشهادة طبية">غير كفء (معفى بشهادة طبية UDS)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-blue-800 mb-1">مؤسسة الإجراء (مركز الامتحان) *</label>
+                            <select id="form-exam-center" class="w-full px-3 py-2 border border-blue-300 bg-blue-50/40 rounded-lg text-sm font-bold text-slate-900 focus:ring-2 focus:ring-blue-600"></select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">رقم الحجرة / القاعة</label>
+                            <input type="text" id="form-room-no" placeholder="مثال: حجرة 01" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-bold focus:ring-2 focus:ring-dzGreen">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">حالة تسديد حقوق التسجيل *</label>
+                            <select id="form-fee" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-bold focus:ring-2 focus:ring-dzGreen">
+                                <option value="مدفوعة">مدفوعة (بريد الجزائر)</option>
+                                <option value="معفى قانوناً">معفى قانوناً</option>
+                                <option value="غير مدفوعة">غير مدفوعة</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">حالة التأكيد من طرف الديوان (ONEC) *</label>
+                            <select id="form-status" required class="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm font-bold focus:ring-2 focus:ring-dzGreen">
+                                <option value="قيد المعالجة">قيد المعالجة</option>
+                                <option value="مؤكد من طرف الديوان ONEC">مؤكد من طرف الديوان ONEC</option>
+                                <option value="نقص وثائق">مرفوض / نقص وثائق</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Administrative Documents Checklist (4 items per row) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs font-bold text-slate-700 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="doc-birth" class="w-4 h-4 accent-dzGreen rounded">
+                        <span>شهادة الميلاد الأصلية / الرقمية</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="doc-transcript" class="w-4 h-4 accent-dzGreen rounded">
+                        <span>شهادة مدرسية / كشف نقاط الفصل الأول</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="doc-receipt" class="w-4 h-4 accent-dzGreen rounded">
+                        <span>وصل دفع حقوق التسجيل (بريد الجزائر)</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" id="doc-photo" class="w-4 h-4 accent-dzGreen rounded">
+                        <span>صورة شمسية رقمية مطابقة للمعايير</span>
+                    </label>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4 border-t border-slate-200">
+                    <button type="button" onclick="closeCandidateModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-bold rounded-xl transition">
+                        إلغاء
+                    </button>
+                    <button type="submit" class="px-6 py-2.5 bg-dzGreen hover:bg-dzGreen-dark text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk"></i>
+                        <span>حفظ المعالجة وتأكيد البيانات</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. STATE & PERMANENT LOCAL STORAGE
+        // ==========================================
+        const DEFAULT_SCHOOL_NAME = 'متوسطة الشهيد خالد مكتوي - سطاوالي';
+        const DEFAULT_DIRECTORATE = 'مديرية التربية للجزائر غرب - سطاوالي';
+        const STORAGE_KEY_CANDIDATES = 'bem2027_khalid_mektoui_candidates_v1';
+        const STORAGE_KEY_CENTERS = 'bem2027_khalid_mektoui_exam_centers_v1';
+
+        const STAGE_1_TABS = ['dashboard', 'candidates', 'audit', 'centers', 'settings'];
+
+        let currentRole = 'PRINCIPAL';
+        let platformOpen = true;
+        let currentPage = 1;
+        const itemsPerPage = 15;
+        let selectedAuditId = null;
+
+        let candidates = [];
+        let examCenters = [];
+
+        function safeLoadCandidates() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY_CANDIDATES);
+                if (!raw) return [];
+                const parsed = JSON.parse(raw);
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (err) {
+                return [];
+            }
+        }
+
+        function safeLoadExamCenters() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY_CENTERS);
+                if (!raw) return [];
+                const parsed = JSON.parse(raw);
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (err) {
+                return [];
+            }
+        }
+
+        function saveToPermanentStorage() {
+            try {
+                localStorage.setItem(STORAGE_KEY_CANDIDATES, JSON.stringify(candidates));
+                localStorage.setItem(STORAGE_KEY_CENTERS, JSON.stringify(examCenters));
+                const indicator = document.getElementById('autosave-indicator');
+                if (indicator) {
+                    indicator.innerHTML = `<i class="fa-solid fa-cloud-check text-emerald-600"></i> <span>محفوظ آلياً (${candidates.length})</span>`;
+                }
+            } catch (err) {
+                showToast('تنبيه: تعذر حفظ البيانات في التخزين المحلي للمتصفح.', 'error');
+            }
+        }
+
+        function getVisibleCandidates() {
+            return Array.isArray(candidates) ? candidates : [];
+        }
+
+        // ==========================================
+        // 2. TAB NAVIGATION (STAGE 1 ONLY OPEN)
+        // ==========================================
+        function switchTab(tabName) {
+            try {
+                if (!STAGE_1_TABS.includes(tabName)) {
+                    showToast('المرحلة الثانية (الوثائق والاستدعاءات) مغلقة حالياً؛ المرحلة الأولى فقط هي المفتوحة.', 'info');
+                    tabName = 'candidates';
+                }
+
+                document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden'));
+                const targetSec = document.getElementById(`tab-${tabName}`);
+                if (targetSec) {
+                    targetSec.classList.remove('hidden');
+                }
+
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    if (btn.id === 'nav-documents') {
+                        btn.classList.remove('bg-dzGreen', 'text-white', 'shadow-sm');
+                        btn.classList.add('text-slate-400', 'bg-slate-50/80', 'hover:bg-slate-100');
+                        return;
+                    }
+                    btn.classList.remove('bg-dzGreen', 'text-white', 'shadow-sm');
+                    btn.classList.add('text-slate-700', 'hover:bg-slate-100');
+                });
+
+                const activeBtn = document.getElementById(`nav-${tabName}`);
+                if (activeBtn && tabName !== 'documents') {
+                    activeBtn.classList.remove('text-slate-700', 'hover:bg-slate-100');
+                    activeBtn.classList.add('bg-dzGreen', 'text-white', 'shadow-sm');
+                }
+
+                if (tabName === 'audit') {
+                    renderAuditTab();
+                } else if (tabName === 'centers') {
+                    renderCentersTab();
+                } else if (tabName === 'dashboard') {
+                    renderDashboard();
+                } else if (tabName === 'candidates') {
+                    renderCandidatesTable();
+                }
+            } catch (err) {
+                showToast('حدث خطأ أثناء التنقل بين التبويبات.', 'error');
+            }
+        }
+
+        // ==========================================
+        // 3. DASHBOARD & KPI CALCULATIONS
+        // ==========================================
+        function renderDashboard() {
+            try {
+                const list = getVisibleCandidates();
+                const total = list.length;
+                const schooled = list.filter(c => c.type === 'متمدرس').length;
+                const free = list.filter(c => c.type !== 'متمدرس').length;
+                const validated = list.filter(c => c.status === 'مؤكد من طرف الديوان ONEC').length;
+                const pending = list.filter(c => c.status === 'قيد المعالجة').length;
+                const rejected = list.filter(c => c.status === 'نقص وثائق').length;
+                const paid = list.filter(c => c.fee === 'مدفوعة' || c.fee === 'معفى قانوناً').length;
+
+                const setElText = (id, text) => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = text;
+                };
+
+                setElText('kpi-total', total);
+                setElText('kpi-school-vs-free', `متمدرسون: ${schooled} | أحرار/عن بعد: ${free}`);
+
+                setElText('kpi-validated', validated);
+                const valPct = total ? Math.round((validated / total) * 100) : 0;
+                setElText('kpi-validated-pct', `نسبة التأكيد النهائي: ${valPct}%`);
+
+                setElText('kpi-pending', pending + rejected);
+                setElText('kpi-rejected-count', `قيد المعالجة: ${pending} | نقص وثائق: ${rejected}`);
+
+                setElText('kpi-centers-count', examCenters.length);
+                const paidPct = total ? Math.round((paid / total) * 100) : 0;
+                setElText('kpi-paid-details', `تسديد الحقوق: ${paidPct}% (${paid}/${total})`);
+
+                setElText('nav-count-badge', total);
+                setElText('nav-pending-badge', pending + rejected);
+
+                const amazighCount = list.filter(c => c.amazigh === 'معني').length;
+                const sportExemptCount = list.filter(c => c.sport === 'معفى بشهادة طبية').length;
+                const centerAssignedCount = list.filter(c => c.centerName && c.centerName !== 'غير معيّن بعد').length;
+
+                const barsData = [
+                    { label: 'المتمدرسون (السنة الرابعة متوسط 4AM)', count: schooled, color: 'bg-dzGreen' },
+                    { label: 'معيّنون في مؤسسة الإجراء (مركز الامتحان)', count: centerAssignedCount, color: 'bg-blue-600' },
+                    { label: 'المعنيون باختبار اللغة الأمازيغية', count: amazighCount, color: 'bg-amber-500' },
+                    { label: 'المعفيون من التربية البدنية (شهادة طبية UDS)', count: sportExemptCount, color: 'bg-dzRed' }
+                ];
+
+                const barsContainer = document.getElementById('dashboard-bars');
+                if (barsContainer) {
+                    barsContainer.innerHTML = barsData.map(item => {
+                        const pct = total ? Math.round((item.count / total) * 100) : 0;
+                        return `
+                            <div>
+                                <div class="flex justify-between text-xs font-bold mb-1">
+                                    <span class="text-slate-700">${item.label}</span>
+                                    <span class="text-slate-900">${item.count} تلميذ (${pct}%)</span>
+                                </div>
+                                <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                                    <div class="${item.color} h-2.5 rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            } catch (err) {
+                // Silent fail for dashboard rendering
+            }
+        }
+
+        // ==========================================
+        // 4. CANDIDATES TABLE & PAGINATION (15 PER PAGE)
+        // ==========================================
+        function getFilteredCandidates() {
+            const searchEl = document.getElementById('search-input');
+            const typeEl = document.getElementById('filter-type');
+            const statusEl = document.getElementById('filter-status');
+            const centerEl = document.getElementById('filter-center');
+
+            const search = searchEl ? searchEl.value.trim().toLowerCase() : '';
+            const typeFilter = typeEl ? typeEl.value : 'ALL';
+            const statusFilter = statusEl ? statusEl.value : 'ALL';
+            const centerFilter = centerEl ? centerEl.value : 'ALL';
+
+            return getVisibleCandidates().filter(c => {
+                const matchSearch = !search ||
+                    String(c.lastnameAr || '').toLowerCase().includes(search) ||
+                    String(c.firstnameAr || '').toLowerCase().includes(search) ||
+                    String(c.lastnameFr || '').toLowerCase().includes(search) ||
+                    String(c.firstnameFr || '').toLowerCase().includes(search) ||
+                    String(c.id || '').toLowerCase().includes(search) ||
+                    String(c.nin || '').includes(search);
+                const matchType = typeFilter === 'ALL' || c.type === typeFilter;
+                const matchStatus = statusFilter === 'ALL' || c.status === statusFilter;
+                const isAssigned = Boolean(c.centerName && c.centerName !== 'غير معيّن بعد');
+                const matchCenter = centerFilter === 'ALL' || (centerFilter === 'ASSIGNED' && isAssigned) || (centerFilter === 'UNASSIGNED' && !isAssigned);
+                return matchSearch && matchType && matchStatus && matchCenter;
+            });
+        }
+
+        function resetPageAndRender() {
+            currentPage = 1;
+            renderCandidatesTable();
+        }
+
+        function changePage(newPage) {
+            const totalItems = getFilteredCandidates().length;
+            const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+            if (newPage < 1 || newPage > totalPages) return;
+            currentPage = newPage;
+            renderCandidatesTable();
+        }
+
+        function renderCandidatesTable() {
+            try {
+                const tbody = document.getElementById('candidates-tbody');
+                const emptyMsg = document.getElementById('empty-table-msg');
+                const paginationControls = document.getElementById('pagination-controls');
+                if (!tbody || !emptyMsg || !paginationControls) return;
+
+                const filtered = getFilteredCandidates();
+                const totalItems = filtered.length;
+                const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
+                if (currentPage > totalPages) currentPage = totalPages;
+
+                if (totalItems === 0) {
+                    tbody.innerHTML = '';
+                    emptyMsg.classList.remove('hidden');
+                    paginationControls.classList.add('hidden');
+                    return;
+                }
+
+                emptyMsg.classList.add('hidden');
+                paginationControls.classList.remove('hidden');
+
+                const startIndex = (currentPage - 1) * itemsPerPage;
+                const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+                const paginatedItems = filtered.slice(startIndex, endIndex);
+
+                tbody.innerHTML = paginatedItems.map(c => {
+                    let statusBadge = '';
+                    if (c.status === 'مؤكد من طرف الديوان ONEC') {
+                        statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800"><i class="fa-solid fa-circle-check"></i> مؤكد من طرف الديوان</span>`;
+                    } else if (c.status === 'قيد المعالجة') {
+                        statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800"><i class="fa-solid fa-clock"></i> قيد المعالجة</span>`;
+                    } else {
+                        statusBadge = `<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-red-100 text-dzRed" title="${c.rejectReason || ''}"><i class="fa-solid fa-triangle-exclamation"></i> نقص وثائق</span>`;
+                    }
+
+                    const feeBadge = (c.fee === 'مدفوعة' || c.fee === 'معفى قانوناً')
+                        ? `<span class="text-xs font-bold text-emerald-700"><i class="fa-solid fa-check ml-1"></i>${c.fee}</span>`
+                        : `<span class="text-xs font-bold text-dzRed"><i class="fa-solid fa-xmark ml-1"></i>${c.fee}</span>`;
+
+                    const centerDisplay = (c.centerName && c.centerName !== 'غير معيّن بعد')
+                        ? `<span class="font-bold text-blue-800 block"><i class="fa-solid fa-building-columns ml-1 text-blue-600"></i>${c.centerName}</span><span class="text-[11px] text-slate-500">الحجرة: ${c.roomNo || '-'}</span>`
+                        : `<span class="text-xs font-semibold text-slate-400 italic">غير معيّنة بعد</span>`;
+
+                    return `
+                        <tr class="hover:bg-slate-50/90 transition-colors">
+                            <td class="py-3 px-3">
+                                <div class="font-extrabold text-slate-900 font-mono text-xs">${c.id}</div>
+                                <div class="text-[11px] text-slate-500 font-mono">NIN: ${c.nin}</div>
+                            </td>
+                            <td class="py-3 px-3">
+                                <div class="font-extrabold text-slate-900">${c.lastnameAr} ${c.firstnameAr}</div>
+                                <div class="text-[11px] text-slate-500 font-mono uppercase">${c.lastnameFr} ${c.firstnameFr}</div>
+                            </td>
+                            <td class="py-3 px-3">
+                                <div class="font-semibold text-slate-800">${c.dob}</div>
+                                <div class="text-[11px] text-slate-500">${c.pob}</div>
+                            </td>
+                            <td class="py-3 px-3">${centerDisplay}</td>
+                            <td class="py-3 px-3 text-xs">
+                                <div>الأمازيغية: <strong class="${c.amazigh === 'معني' ? 'text-dzGreen' : 'text-slate-500'}">${c.amazigh}</strong></div>
+                                <div>ت.البدنية: <strong class="${c.sport === 'كفء' ? 'text-slate-700' : 'text-amber-700'}">${c.sport}</strong></div>
+                            </td>
+                            <td class="py-3 px-3">
+                                ${feeBadge}
+                                <div class="text-[10px] text-slate-400 font-mono">${c.receiptNo || ''}</div>
+                            </td>
+                            <td class="py-3 px-3">${statusBadge}</td>
+                            <td class="py-3 px-3 text-center">
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <button type="button" onclick="openEditCandidateModal('${c.id}')" title="معالجة بيانات التلميذ" class="px-2.5 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-xs font-bold transition flex items-center gap-1">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                        <span>معالجة</span>
+                                    </button>
+                                    ${c.status !== 'مؤكد من طرف الديوان ONEC' ? `
+                                    <button type="button" onclick="quickConfirmONEC('${c.id}')" title="تأكيد من طرف الديوان ONEC" class="px-2.5 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 rounded-lg text-xs font-bold transition flex items-center gap-1">
+                                        <i class="fa-solid fa-check-double"></i>
+                                        <span>تأكيد</span>
+                                    </button>` : ''}
+                                    <button type="button" onclick="printSingleCandidate('${c.id}', 'FORM')" title="طباعة استمارة التسجيل A4" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition">
+                                        <i class="fa-solid fa-print"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+                const infoEl = document.getElementById('pagination-info');
+                if (infoEl) {
+                    infoEl.textContent = `عرض ${startIndex + 1} إلى ${endIndex} من أصل ${totalItems} تلميذ (الصفحة ${currentPage} من ${totalPages})`;
+                }
+
+                let pagesHtml = `
+                    <button type="button" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="px-3.5 py-2 rounded-lg font-bold border ${currentPage === 1 ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed' : 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100'} transition flex items-center gap-1">
+                        <i class="fa-solid fa-chevron-right text-xs"></i>
+                        <span>السابق</span>
+                    </button>
+                `;
+
+                for (let p = 1; p <= totalPages; p++) {
+                    pagesHtml += `
+                        <button type="button" onclick="changePage(${p})" class="w-9 h-9 rounded-lg font-bold text-xs transition ${p === currentPage ? 'bg-dzGreen text-white shadow-xs' : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'}">
+                            ${p}
+                        </button>
+                    `;
+                }
+
+                pagesHtml += `
+                    <button type="button" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="px-3.5 py-2 rounded-lg font-bold border ${currentPage === totalPages ? 'bg-slate-100 text-slate-400 border-slate-200 cursor-not-allowed' : 'bg-white text-slate-800 border-slate-300 hover:bg-slate-100'} transition flex items-center gap-1">
+                        <span>التالي</span>
+                        <i class="fa-solid fa-chevron-left text-xs"></i>
+                    </button>
+                `;
+
+                const buttonsEl = document.getElementById('pagination-buttons');
+                if (buttonsEl) buttonsEl.innerHTML = pagesHtml;
+            } catch (err) {
+                showToast('حدث خطأ أثناء عرض جدول المترشحين.', 'error');
+            }
+        }
+
+        function quickConfirmONEC(id) {
+            const idx = candidates.findIndex(c => String(c.id) === String(id));
+            if (idx !== -1) {
+                candidates[idx].status = 'مؤكد من طرف الديوان ONEC';
+                candidates[idx].rejectReason = '';
+                saveToPermanentStorage();
+                refreshAllViews();
+                showToast(`تم تأكيد بيانات التلميذ (${candidates[idx].lastnameAr} ${candidates[idx].firstnameAr}) مع ONEC وحفظها نهائياً.`, 'success');
+            }
+        }
+
+        // ==========================================
+        // 5. MODAL: EDIT & PROCESS CANDIDATE
+        // ==========================================
+        function populateExamCenterSelects() {
+            const formSelect = document.getElementById('form-exam-center');
+            const bulkSelect = document.getElementById('bulk-exam-center-select');
+
+            const optionsHtml = examCenters.length
+                ? examCenters.map(c => `<option value="${c.name}">${c.code ? `[${c.code}] ` : ''}${c.name}</option>`).join('')
+                : `<option value="غير معيّن بعد">غير معيّن بعد (أضف مراكز إجراء أولاً)</option>`;
+
+            if (formSelect) {
+                const prevVal = formSelect.value;
+                formSelect.innerHTML = `<option value="غير معيّن بعد">-- اختر مؤسسة الإجراء --</option>` + optionsHtml;
+                if (prevVal) formSelect.value = prevVal;
+            }
+
+            if (bulkSelect) {
+                const prevBulk = bulkSelect.value;
+                bulkSelect.innerHTML = optionsHtml;
+                if (prevBulk) bulkSelect.value = prevBulk;
+            }
+        }
+
+        function openEditCandidateModal(id) {
+            try {
+                const c = candidates.find(item => String(item.id) === String(id));
+                if (!c) {
+                    showToast('تعذر العثور على ملف التلميذ المطلوب.', 'error');
+                    return;
+                }
+
+                populateExamCenterSelects();
+
+                const titleEl = document.getElementById('modal-title');
+                if (titleEl) {
+                    titleEl.innerHTML = `<i class="fa-solid fa-user-pen"></i><span>معالجة وتأكيد بيانات التلميذ: ${c.lastnameAr} ${c.firstnameAr} (${c.id})</span>`;
+                }
+
+                document.getElementById('edit-candidate-id').value = c.id;
+                document.getElementById('form-nin').value = c.nin || '';
+                document.getElementById('form-gender').value = c.gender || 'ذكر';
+                document.getElementById('form-lastname-ar').value = c.lastnameAr || '';
+                document.getElementById('form-firstname-ar').value = c.firstnameAr || '';
+                document.getElementById('form-lastname-fr').value = c.lastnameFr || '';
+                document.getElementById('form-firstname-fr').value = c.firstnameFr || '';
+                document.getElementById('form-dob').value = c.dob || '2012-01-01';
+                document.getElementById('form-pob').value = c.pob || '';
+                document.getElementById('form-address').value = c.address || '';
+
+                document.getElementById('form-father-name').value = c.fatherName || '';
+                document.getElementById('form-father-job').value = c.fatherJob || '';
+                document.getElementById('form-mother-name').value = c.motherName || '';
+                document.getElementById('form-mother-job').value = c.motherJob || '';
+                document.getElementById('form-parent-phone').value = c.parentPhone || '';
+                document.getElementById('form-reg-book').value = c.regBookNo || '';
+                document.getElementById('form-school').value = c.school || DEFAULT_SCHOOL_NAME;
+                document.getElementById('form-class').value = c.classRoom || '';
+
+                document.getElementById('form-type').value = c.type || 'متمدرس';
+                document.getElementById('form-wilaya').value = c.wilaya || DEFAULT_DIRECTORATE;
+                document.getElementById('form-amazigh').value = c.amazigh || 'غير معني';
+                document.getElementById('form-sport').value = c.sport || 'كفء';
+                document.getElementById('form-exam-center').value = c.centerName || 'غير معيّن بعد';
+                document.getElementById('form-room-no').value = c.roomNo || '';
+                document.getElementById('form-fee').value = c.fee || 'مدفوعة';
+                document.getElementById('form-status').value = c.status || 'قيد المعالجة';
+
+                const docs = c.docs || { birth: true, transcript: true, receipt: true, photo: true };
+                document.getElementById('doc-birth').checked = Boolean(docs.birth);
+                document.getElementById('doc-transcript').checked = Boolean(docs.transcript);
+                document.getElementById('doc-receipt').checked = Boolean(docs.receipt);
+                document.getElementById('doc-photo').checked = Boolean(docs.photo);
+
+                const modal = document.getElementById('candidate-modal');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                }
+            } catch (err) {
+                showToast('حدث خطأ أثناء فتح نافذة معالجة التلميذ.', 'error');
+            }
+        }
+
+        function closeCandidateModal() {
+            const modal = document.getElementById('candidate-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function saveCandidate(e) {
+            e.preventDefault();
+            try {
+                const editId = document.getElementById('edit-candidate-id').value;
+                const idx = candidates.findIndex(item => String(item.id) === String(editId));
+                if (idx === -1) {
+                    showToast('تعذر حفظ البيانات: لم يتم العثور على التلميذ.', 'error');
+                    return;
+                }
+
+                const existing = candidates[idx];
+                const newStatus = document.getElementById('form-status').value;
+
+                candidates[idx] = {
+                    ...existing,
+                    nin: document.getElementById('form-nin').value.trim(),
+                    gender: document.getElementById('form-gender').value,
+                    lastnameAr: document.getElementById('form-lastname-ar').value.trim(),
+                    firstnameAr: document.getElementById('form-firstname-ar').value.trim(),
+                    lastnameFr: document.getElementById('form-lastname-fr').value.trim().toUpperCase(),
+                    firstnameFr: document.getElementById('form-firstname-fr').value.trim().toUpperCase(),
+                    dob: document.getElementById('form-dob').value,
+                    pob: document.getElementById('form-pob').value.trim(),
+                    address: document.getElementById('form-address').value.trim(),
+                    fatherName: document.getElementById('form-father-name').value.trim(),
+                    fatherJob: document.getElementById('form-father-job').value.trim(),
+                    motherName: document.getElementById('form-mother-name').value.trim(),
+                    motherJob: document.getElementById('form-mother-job').value.trim(),
+                    parentPhone: document.getElementById('form-parent-phone').value.trim(),
+                    regBookNo: document.getElementById('form-reg-book').value.trim(),
+                    school: document.getElementById('form-school').value.trim() || DEFAULT_SCHOOL_NAME,
+                    classRoom: document.getElementById('form-class').value.trim(),
+                    type: document.getElementById('form-type').value,
+                    wilaya: document.getElementById('form-wilaya').value.trim() || DEFAULT_DIRECTORATE,
+                    amazigh: document.getElementById('form-amazigh').value,
+                    sport: document.getElementById('form-sport').value,
+                    centerName: document.getElementById('form-exam-center').value || 'غير معيّن بعد',
+                    roomNo: document.getElementById('form-room-no').value.trim() || '-',
+                    fee: document.getElementById('form-fee').value,
+                    status: newStatus,
+                    rejectReason: newStatus === 'نقص وثائق' ? (existing.rejectReason || 'يرجى استكمال الملف الإداري') : '',
+                    docs: {
+                        birth: document.getElementById('doc-birth').checked,
+                        transcript: document.getElementById('doc-transcript').checked,
+                        receipt: document.getElementById('doc-receipt').checked,
+                        photo: document.getElementById('doc-photo').checked
+                    }
+                };
+
+                saveToPermanentStorage();
+                closeCandidateModal();
+                refreshAllViews();
+                showToast(`تم حفظ ومعالجة بيانات (${candidates[idx].lastnameAr} ${candidates[idx].firstnameAr}) وحفظها نهائياً.`, 'success');
+            } catch (err) {
+                showToast('حدث خطأ أثناء حفظ بيانات التلميذ.', 'error');
+            }
+        }
+
+        // ==========================================
+        // 6. EXCEL IMPORT / EXPORT / TEMPLATE
+        // ==========================================
+        function openExcelImportModal() {
+            const modal = document.getElementById('excel-import-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
+        }
+
+        function closeExcelImportModal() {
+            const modal = document.getElementById('excel-import-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+            const fileInput = document.getElementById('excel-file-input');
+            if (fileInput) fileInput.value = '';
+        }
+
+        function normalizeExcelRow(row, index) {
+            const getVal = (keys) => {
+                for (const k of keys) {
+                    if (row[k] !== undefined && row[k] !== null && String(row[k]).trim() !== '') {
+                        return String(row[k]).trim();
+                    }
+                }
+                return '';
+            };
+
+            const seq = candidates.length + index + 1;
+            const id = getVal(['رقم التسجيل', 'ID', 'Matricule', 'رقم الملف']) || `BEM27-${String(seq).padStart(4, '0')}`;
+            const nin = getVal(['الرقم الوطني', 'NIN', 'الرقم التعريفي الوطني']) || `1012${String(10000000000000 + seq).slice(-14)}`;
+            const lastnameAr = getVal(['اللقب', 'اللقب بالعربية', 'Nom AR']) || 'غير محدد';
+            const firstnameAr = getVal(['الاسم', 'الاسم باللغة العربية', 'الاسم بالعربية', 'Prenom AR']) || `مترشح ${seq}`;
+            const lastnameFr = getVal(['اللقب باللاتينية', 'NOM', 'Nom FR']) || 'NOM';
+            const firstnameFr = getVal(['الاسم باللاتينية', 'PRENOM', 'Prenom FR']) || 'PRENOM';
+            const dob = getVal(['تاريخ الميلاد', 'Date Naissance', 'DOB']) || '2012-05-15';
+            const pob = getVal(['مكان الميلاد', 'بلدية الميلاد', 'Lieu Naissance', 'POB']) || 'سطاوالي - الجزائر';
+            const gender = getVal(['الجنس', 'Sexe', 'Genre']) || 'ذكر';
+            const fatherName = getVal(['اسم الأب', 'الاب', 'Pere']) || '';
+            const motherName = getVal(['اسم الأم', 'لقب واسم الأم', 'الام', 'Mere']) || '';
+            const parentPhone = getVal(['رقم الهاتف', 'هاتف الولي', 'Telephone']) || '';
+            const school = getVal(['المؤسسة', 'المؤسسة التعليمية', 'المتوسطة']) || DEFAULT_SCHOOL_NAME;
+            const classRoom = getVal(['القسم', 'الفوج', 'Classe']) || '4 متوسط 1';
+            const type = getVal(['الصفة', 'نوع الترشح']) || 'متمدرس';
+            const amazigh = getVal(['الأمازيغية', 'اللغة الأمازيغية']) || 'غير معني';
+            const sport = getVal(['التربية البدنية', 'الرياضة']) || 'كفء';
+            const fee = getVal(['حقوق التسجيل', 'الدفع']) || 'مدفوعة';
+            const status = getVal(['الحالة', 'حالة التأكيد']) || 'قيد المعالجة';
+            const centerName = getVal(['مؤسسة الإجراء', 'مركز الامتحان', 'المركز']) || 'غير معيّن بعد';
+            const roomNo = getVal(['الحجرة', 'رقم الحجرة']) || '-';
+
+            return {
+                id,
+                nin,
+                lastnameAr,
+                firstnameAr,
+                lastnameFr,
+                firstnameFr,
+                dob,
+                pob,
+                gender,
+                address: getVal(['العنوان', 'Adresse']) || 'سطاوالي، الجزائر العاصمة',
+                fatherName,
+                fatherJob: '',
+                motherName,
+                motherJob: '',
+                parentPhone,
+                regBookNo: '',
+                school,
+                classRoom,
+                type,
+                wilaya: DEFAULT_DIRECTORATE,
+                amazigh,
+                sport,
+                fee,
+                receiptNo: `CCP-27-${String(seq).padStart(4, '0')}`,
+                status,
+                rejectReason: '',
+                centerName,
+                roomNo,
+                seatNo: '-',
+                docs: { birth: true, transcript: true, receipt: true, photo: true }
+            };
+        }
+
+        function handleExcelFileUpload(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+
+            if (typeof XLSX === 'undefined') {
+                showToast('مكتبة قراءة ملفات الإكسل غير متاحة حالياً. يرجى التحقق من الاتصال.', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const jsonRows = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+
+                    if (!Array.isArray(jsonRows) || jsonRows.length === 0) {
+                        showToast('ملف الإكسل المختار فارغ أو لا يحتوي على صفوف بيانات.', 'error');
+                        return;
+                    }
+
+                    const imported = jsonRows.map((row, idx) => normalizeExcelRow(row, idx));
+                    candidates = [...candidates, ...imported];
+                    currentPage = 1;
+                    saveToPermanentStorage();
+                    refreshAllViews();
+                    closeExcelImportModal();
+                    switchTab('candidates');
+                    showToast(`تم استيراد ${imported.length} تلميذاً من ملف الإكسل وحفظهم آلياً في المنصة.`, 'success');
+                } catch (err) {
+                    showToast('تعذر قراءة ملف الإكسل. تأكد من سلامة صيغة الملف (.xlsx / .xls / .csv).', 'error');
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function downloadExcelTemplate() {
+            try {
+                if (typeof XLSX === 'undefined') {
+                    showToast('مكتبة الإكسل غير محملة حالياً.', 'error');
+                    return;
+                }
+                const headers = [[
+                    'رقم التسجيل', 'الرقم الوطني', 'اللقب', 'الاسم', 'اللقب باللاتينية',
+                    'الاسم باللاتينية', 'تاريخ الميلاد', 'مكان الميلاد', 'الجنس',
+                    'اسم الأب', 'اسم الأم', 'رقم الهاتف', 'المؤسسة', 'القسم',
+                    'الصفة', 'الأمازيغية', 'التربية البدنية', 'حقوق التسجيل', 'مؤسسة الإجراء'
+                ]];
+                const ws = XLSX.utils.aoa_to_sheet(headers);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'قائمة_التلاميذ_2027');
+                XLSX.writeFile(wb, 'نموذج_استيراد_تلاميذ_BEM_2027.xlsx');
+                showToast('تم تحميل نموذج الإكسل الفارغ بنجاح.', 'success');
+            } catch (err) {
+                showToast('تعذر إنشاء نموذج الإكسل.', 'error');
+            }
+        }
+
+        function exportExcelFile() {
+            try {
+                if (!candidates.length) {
+                    showToast('لا توجد بيانات تلاميذ لتصديرها.', 'info');
+                    return;
+                }
+                if (typeof XLSX === 'undefined') {
+                    showToast('مكتبة الإكسل غير محملة حالياً.', 'error');
+                    return;
+                }
+                const rows = candidates.map(c => ({
+                    'رقم التسجيل': c.id,
+                    'الرقم الوطني (NIN)': c.nin,
+                    'اللقب': c.lastnameAr,
+                    'الاسم': c.firstnameAr,
+                    'اللقب باللاتينية': c.lastnameFr,
+                    'الاسم باللاتينية': c.firstnameFr,
+                    'تاريخ الميلاد': c.dob,
+                    'مكان الميلاد': c.pob,
+                    'الجنس': c.gender,
+                    'اسم الأب': c.fatherName,
+                    'اسم الأم': c.motherName,
+                    'المؤسسة': c.school,
+                    'القسم': c.classRoom,
+                    'الصفة': c.type,
+                    'مؤسسة الإجراء': c.centerName,
+                    'الحجرة': c.roomNo,
+                    'حالة التأكيد': c.status
+                }));
+                const ws = XLSX.utils.json_to_sheet(rows);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, 'تلاميذ_BEM_2027');
+                XLSX.writeFile(wb, 'قائمة_تلاميذ_متوسطة_الشهيد_خالد_مكتوي_2027.xlsx');
+                showToast('تم تصدير القائمة إلى ملف إكسل بنجاح.', 'success');
+            } catch (err) {
+                showToast('حدث خطأ أثناء تصدير ملف الإكسل.', 'error');
+            }
+        }
+
+        function clearAllCandidatesData() {
+            candidates = [];
+            currentPage = 1;
+            selectedAuditId = null;
+            saveToPermanentStorage();
+            refreshAllViews();
+            closeExcelImportModal();
+            showToast('تم إفراغ قاعدة بيانات التلاميذ المحفوظة بنجاح.', 'info');
+        }
+
+        // ==========================================
+        // 7. AUDIT & CONFIRMATION WORKFLOW
+        // ==========================================
+        function renderAuditTab() {
+            try {
+                const listContainer = document.getElementById('audit-candidates-list');
+                const detailPanel = document.getElementById('audit-detail-panel');
+                const countBadge = document.getElementById('audit-list-count');
+                if (!listContainer || !detailPanel || !countBadge) return;
+
+                const list = getVisibleCandidates();
+                countBadge.textContent = `${list.length} ملف`;
+
+                if (list.length === 0) {
+                    listContainer.innerHTML = `<div class="p-6 text-center text-xs text-slate-500">لا توجد ملفات تلاميذ مستوردة للمراقبة حالياً.</div>`;
+                    detailPanel.innerHTML = `<div class="text-center py-12 text-slate-400 text-sm">قم باستيراد بيانات التلاميذ من ملف إكسل أولاً لمعاينة وتأكيد ملفاتهم.</div>`;
+                    return;
+                }
+
+                if (!selectedAuditId || !list.some(c => String(c.id) === String(selectedAuditId))) {
+                    selectedAuditId = list[0].id;
+                }
+
+                listContainer.innerHTML = list.map(c => {
+                    const isSelected = String(c.id) === String(selectedAuditId);
+                    const dotColor = c.status === 'مؤكد من طرف الديوان ONEC' ? 'bg-emerald-500' : (c.status === 'قيد المعالجة' ? 'bg-amber-500' : 'bg-dzRed');
+                    return `
+                        <button type="button" onclick="selectAuditCandidate('${c.id}')" class="w-full text-right p-3.5 hover:bg-slate-50 transition flex items-center justify-between ${isSelected ? 'bg-dzGreen-light/60 border-r-4 border-r-dzGreen' : ''}">
+                            <div>
+                                <div class="font-extrabold text-xs sm:text-sm text-slate-900">${c.lastnameAr} ${c.firstnameAr}</div>
+                                <div class="text-[11px] text-slate-500 font-mono">${c.id} | ${c.type}</div>
+                            </div>
+                            <span class="w-2.5 h-2.5 rounded-full ${dotColor}"></span>
+                        </button>
+                    `;
+                }).join('');
+
+                const cand = list.find(c => String(c.id) === String(selectedAuditId)) || list[0];
+                const docs = cand.docs || { birth: true, transcript: true, receipt: true, photo: true };
+
+                detailPanel.innerHTML = `
+                    <div class="flex flex-wrap justify-between items-start gap-3 pb-4 border-b border-slate-200">
+                        <div>
+                            <span class="text-xs font-bold text-dzGreen">ملف المترشح رقم: ${cand.id}</span>
+                            <h3 class="text-lg font-black text-slate-900">${cand.lastnameAr} ${cand.firstnameAr} <span class="text-sm font-mono text-slate-500">(${cand.lastnameFr} ${cand.firstnameFr})</span></h3>
+                            <p class="text-xs text-slate-600 mt-0.5">الرقم الوطني (NIN): <strong class="font-mono">${cand.nin}</strong> | المؤسسة: <strong>${cand.school}</strong></p>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-xs font-extrabold ${cand.status === 'مؤكد من طرف الديوان ONEC' ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                            ${cand.status}
+                        </span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 my-4 text-xs">
+                        <div class="p-3 rounded-xl bg-white border ${docs.birth ? 'border-emerald-200' : 'border-red-200'} flex items-center justify-between">
+                            <span class="font-bold">شهادة الميلاد والمطابقة (NIN)</span>
+                            <span class="font-extrabold ${docs.birth ? 'text-emerald-700' : 'text-dzRed'}">${docs.birth ? 'مطابق' : 'ناقص'}</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-white border ${docs.transcript ? 'border-emerald-200' : 'border-red-200'} flex items-center justify-between">
+                            <span class="font-bold">الملف المدرسي (4AM)</span>
+                            <span class="font-extrabold ${docs.transcript ? 'text-emerald-700' : 'text-dzRed'}">${docs.transcript ? 'مستوفى' : 'ناقص'}</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-white border ${docs.receipt ? 'border-emerald-200' : 'border-red-200'} flex items-center justify-between">
+                            <span class="font-bold">حقوق التسجيل (${cand.fee})</span>
+                            <span class="font-extrabold ${docs.receipt ? 'text-emerald-700' : 'text-dzRed'}">${docs.receipt ? 'مؤكد' : 'غير مؤكد'}</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-white border ${docs.photo ? 'border-emerald-200' : 'border-red-200'} flex items-center justify-between">
+                            <span class="font-bold">الصورة الشمسية ومؤسسة الإجراء</span>
+                            <span class="font-extrabold text-blue-700">${cand.centerName || 'غير معيّن'}</span>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2.5 pt-3 border-t border-slate-200">
+                        <button type="button" onclick="updateAuditDecision('${cand.id}', 'مؤكد من طرف الديوان ONEC')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-check-double"></i>
+                            <span>تأكيد الملف من طرف الديوان (ONEC)</span>
+                        </button>
+                        <button type="button" onclick="updateAuditDecision('${cand.id}', 'قيد المعالجة')" class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-clock"></i>
+                            <span>إبقاء قيد المعالجة</span>
+                        </button>
+                        <button type="button" onclick="openEditCandidateModal('${cand.id}')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                            <span>تعديل كافة البيانات</span>
+                        </button>
+                    </div>
+                `;
+            } catch (err) {
+                // Silent fail
+            }
+        }
+
+        function selectAuditCandidate(id) {
+            selectedAuditId = id;
+            renderAuditTab();
+        }
+
+        function updateAuditDecision(id, decision) {
+            const idx = candidates.findIndex(c => String(c.id) === String(id));
+            if (idx !== -1) {
+                candidates[idx].status = decision;
+                saveToPermanentStorage();
+                refreshAllViews();
+                showToast(`تم تحديث حالة ملف (${candidates[idx].lastnameAr} ${candidates[idx].firstnameAr}) إلى: ${decision}`, 'success');
+            }
+        }
+
+        function bulkValidatePending() {
+            let count = 0;
+            candidates.forEach(c => {
+                if (c.status !== 'مؤكد من طرف الديوان ONEC') {
+                    c.status = 'مؤكد من طرف الديوان ONEC';
+                    c.rejectReason = '';
+                    count++;
+                }
+            });
+            saveToPermanentStorage();
+            refreshAllViews();
+            showToast(`تم تأكيد ${count} ملفاً وحفظها نهائياً في المنصة.`, 'success');
+        }
+
+        // ==========================================
+        // 8. EXAM CENTERS MANAGEMENT & ALLOCATION
+        // ==========================================
+        function addNewExamCenter(e) {
+            e.preventDefault();
+            try {
+                const codeInput = document.getElementById('new-center-code');
+                const nameInput = document.getElementById('new-center-name');
+                const capInput = document.getElementById('new-center-capacity');
+                const roomsInput = document.getElementById('new-center-rooms');
+
+                const name = nameInput ? nameInput.value.trim() : '';
+                if (!name) {
+                    showToast('يرجى إدخال اسم مؤسسة الإجراء / مركز الامتحان.', 'error');
+                    return;
+                }
+
+                const code = (codeInput && codeInput.value.trim()) ? codeInput.value.trim() : `16${String(examCenters.length + 20).padStart(2, '0')}`;
+                const capacity = parseInt(capInput && capInput.value, 10) || 240;
+                const rooms = parseInt(roomsInput && roomsInput.value, 10) || 12;
+
+                examCenters.push({
+                    id: `CTR-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+                    code,
+                    name,
+                    capacity,
+                    rooms
+                });
+
+                saveToPermanentStorage();
+                populateExamCenterSelects();
+                renderCentersTab();
+                renderDashboard();
+
+                if (codeInput) codeInput.value = '';
+                if (nameInput) nameInput.value = '';
+                showToast(`تمت إضافة مركز الإجراء (${name}) وحفظه آلياً.`, 'success');
+            } catch (err) {
+                showToast('حدث خطأ أثناء إضافة مركز الإجراء.', 'error');
+            }
+        }
+
+        function addBulkExamCenters() {
+            try {
+                const textarea = document.getElementById('bulk-centers-textarea');
+                if (!textarea) return;
+                const lines = textarea.value
+                    .split(/\r?\n/)
+                    .map(line => line.trim())
+                    .filter(Boolean);
+
+                if (lines.length === 0) {
+                    showToast('يرجى كتابة اسم مركز إجراء واحد على الأقل في الخانة.', 'info');
+                    return;
+                }
+
+                lines.forEach((line, idx) => {
+                    examCenters.push({
+                        id: `CTR-${Date.now()}-${idx}-${Math.floor(Math.random() * 1000)}`,
+                        code: `16${String(examCenters.length + 20).padStart(2, '0')}`,
+                        name: line,
+                        capacity: 240,
+                        rooms: 12
+                    });
+                });
+
+                textarea.value = '';
+                saveToPermanentStorage();
+                populateExamCenterSelects();
+                renderCentersTab();
+                renderDashboard();
+                showToast(`تمت إضافة ${lines.length} مركز إجراء وحفظها آلياً.`, 'success');
+            } catch (err) {
+                showToast('حدث خطأ أثناء إدراج مراكز الإجراء.', 'error');
+            }
+        }
+
+        function removeExamCenter(centerId) {
+            const target = examCenters.find(c => c.id === centerId);
+            examCenters = examCenters.filter(c => c.id !== centerId);
+            if (target) {
+                candidates.forEach(cand => {
+                    if (cand.centerName === target.name) {
+                        cand.centerName = 'غير معيّن بعد';
+                        cand.roomNo = '-';
+                    }
+                });
+            }
+            saveToPermanentStorage();
+            populateExamCenterSelects();
+            renderCentersTab();
+            renderCandidatesTable();
+            renderDashboard();
+            showToast('تم حذف مركز الإجراء وتحديث القائمة آلياً.', 'info');
+        }
+
+        function assignCustomExamCenterToAll() {
+            try {
+                const selectEl = document.getElementById('bulk-exam-center-select');
+                const chosenCenter = selectEl ? selectEl.value : '';
+                if (!chosenCenter || chosenCenter === 'غير معيّن بعد') {
+                    showToast('يرجى إضافة أو اختيار مؤسسة إجراء أولاً.', 'info');
+                    return;
+                }
+
+                if (candidates.length === 0) {
+                    showToast('لا توجد بيانات تلاميذ مستوردة لتعيين مؤسسة الإجراء لهم.', 'info');
+                    return;
+                }
+
+                candidates.forEach((c, idx) => {
+                    const roomNumber = Math.floor(idx / 20) + 1;
+                    c.centerName = chosenCenter;
+                    c.roomNo = `حجرة ${String(roomNumber).padStart(2, '0')}`;
+                });
+
+                saveToPermanentStorage();
+                renderCentersTab();
+                renderCandidatesTable();
+                renderDashboard();
+                showToast(`تم تعيين مؤسسة الإجراء (${chosenCenter}) لجميع التلاميذ (${candidates.length}) وحفظها آلياً.`, 'success');
+            } catch (err) {
+                showToast('حدث خطأ أثناء تعيين مؤسسة الإجراء.', 'error');
+            }
+        }
+
+        function renderCentersTab() {
+            try {
+                populateExamCenterSelects();
+                const badge = document.getElementById('centers-total-badge');
+                const cardsGrid = document.getElementById('centers-cards-grid');
+                const tbody = document.getElementById('centers-tbody');
+                if (!cardsGrid || !tbody) return;
+
+                if (badge) badge.textContent = `${examCenters.length} مركز إجراء`;
+
+                if (examCenters.length === 0) {
+                    cardsGrid.innerHTML = `
+                        <div class="md:col-span-3 p-6 rounded-xl border border-dashed border-slate-300 text-center text-xs text-slate-500 bg-slate-50">
+                            لم تقم بإضافة أي مركز إجراء بعد. استخدم النموذج أعلاه لإضافة مراكز الإجراء وحفظها آلياً.
+                        </div>
+                    `;
+                } else {
+                    cardsGrid.innerHTML = examCenters.map(ctr => {
+                        const assignedCount = candidates.filter(c => c.centerName === ctr.name).length;
+                        return `
+                            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/70 flex flex-col justify-between">
+                                <div class="flex justify-between items-start gap-2">
+                                    <div>
+                                        <span class="text-[11px] font-mono font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded">رمز: ${ctr.code}</span>
+                                        <h4 class="font-extrabold text-sm text-slate-900 mt-1.5">${ctr.name}</h4>
+                                    </div>
+                                    <button type="button" onclick="removeExamCenter('${ctr.id}')" title="حذف المركز" class="text-slate-400 hover:text-dzRed text-xs p-1">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                </div>
+                                <div class="mt-3 pt-2.5 border-t border-slate-200 flex justify-between items-center text-xs font-bold text-slate-600">
+                                    <span>المعيّنون: <strong class="text-blue-700">${assignedCount}</strong> / ${ctr.capacity}</span>
+                                    <span>${ctr.rooms} حجرة</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                const list = getVisibleCandidates();
+                if (list.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="6" class="py-8 text-center text-xs text-slate-500">لا توجد بيانات تلاميذ لعرض توزيع مراكز الإجراء.</td></tr>`;
+                } else {
+                    tbody.innerHTML = list.map(c => `
+                        <tr class="hover:bg-slate-50">
+                            <td class="py-3 px-3 font-mono font-bold text-xs">${c.id}</td>
+                            <td class="py-3 px-3 font-bold text-slate-900">${c.lastnameAr} ${c.firstnameAr}</td>
+                            <td class="py-3 px-3 text-xs">${c.type}</td>
+                            <td class="py-3 px-3 font-bold text-blue-800">${c.centerName || 'غير معيّن بعد'}</td>
+                            <td class="py-3 px-3 font-bold text-slate-700">${c.roomNo || '-'}</td>
+                            <td class="py-3 px-3 text-xs font-bold ${c.status === 'مؤكد من طرف الديوان ONEC' ? 'text-emerald-700' : 'text-amber-700'}">${c.status}</td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (err) {
+                // Silent fail
+            }
+        }
+
+        // ==========================================
+        // 9. TRADITIONAL OFFICIAL DOCUMENTS & RELIABLE A4 PRINT (#print-area)
+        // ==========================================
+        function printSingleCandidate(id, docType = 'FORM') {
+            try {
+                const c = candidates.find(item => String(item.id) === String(id)) || getVisibleCandidates()[0];
+                if (!c) {
+                    showToast('لا توجد بيانات تلميذ مستوردة للطباعة.', 'error');
+                    return;
+                }
+                triggerOfficialPrint(c, docType);
+            } catch (err) {
+                showToast('حدث خطأ أثناء تجهيز الوثيقة للطباعة.', 'error');
+            }
+        }
+
+        function buildOfficialDocumentHtml(c, docType = 'FORM') {
+            const onecSideLogo = `
+                <div class="flex flex-col items-center justify-center shrink-0 border border-slate-400 rounded-lg p-2 bg-slate-50/70 w-24">
+                    <svg width="56" height="56" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="شعار الديوان الوطني للامتحانات والمسابقات">
+                        <circle cx="32" cy="32" r="29" stroke="#006233" stroke-width="2.5" fill="#ffffff"/>
+                        <circle cx="32" cy="32" r="23" stroke="#0f172a" stroke-width="1" stroke-dasharray="2 2"/>
+                        <path d="M18 35L32 22L46 35" stroke="#006233" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M22 33V44H42V33" stroke="#0f172a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="32" cy="15" r="2.2" fill="#D21034"/>
+                    </svg>
+                    <span class="text-[11px] font-black text-slate-900 leading-tight text-center mt-1">ONEC</span>
+                    <span class="text-[9px] font-bold text-slate-700 leading-tight text-center">الديوان الوطني للامتحانات والمسابقات</span>
+                </div>
+            `;
+
+            if (docType === 'CONVOCATION') {
+                return `
+                    <div class="border-2 border-slate-900 p-5 sm:p-6 text-slate-900 bg-white">
+                        <div class="flex items-start justify-between gap-4 border-b-2 border-slate-900 pb-3 mb-4">
+                            <div class="flex-1 text-center">
+                                <p class="font-bold text-sm">الجمهورية الجزائرية الديمقراطية الشعبية</p>
+                                <p class="font-bold text-xs">وزارة التربية الوطنية</p>
+                                <div class="mt-2 inline-block bg-slate-900 text-white px-4 py-1 rounded-md font-extrabold text-xs sm:text-sm">
+                                    استدعاء لإجراء امتحان شهادة التعليم المتوسط — دورة جوان 2027
+                                </div>
+                            </div>
+                            ${onecSideLogo}
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-4 mb-4 items-center bg-slate-50 p-3.5 rounded-lg border border-slate-300 text-xs">
+                            <div class="col-span-2 space-y-1.5">
+                                <p><strong>رقم التسجيل:</strong> <span class="font-mono font-black text-sm text-slate-900">${c.id}</span></p>
+                                <p><strong>اللقب والاسم:</strong> <span class="font-extrabold text-sm">${c.lastnameAr} ${c.firstnameAr}</span> (${c.lastnameFr} ${c.firstnameFr})</p>
+                                <p><strong>تاريخ ومكان الميلاد:</strong> ${c.dob} بـ ${c.pob}</p>
+                                <p><strong>المؤسسة الأصلية:</strong> ${c.school || DEFAULT_SCHOOL_NAME}</p>
+                                <p><strong>مؤسسة الإجراء (مركز الامتحان):</strong> <span class="font-extrabold text-slate-900 underline">${c.centerName || 'غير معيّنة بعد'}</span></p>
+                                <p><strong>رقم الحجرة:</strong> <span class="font-extrabold text-slate-900">${c.roomNo && c.roomNo !== '-' ? c.roomNo : 'حجرة 01'}</span> | <strong>الأمازيغية:</strong> ${c.amazigh} | <strong>ت.البدنية:</strong> ${c.sport}</p>
+                            </div>
+                            <div class="flex flex-col items-center justify-center border-r border-slate-300 pr-3">
+                                <div class="w-24 h-28 border border-slate-400 bg-white flex items-center justify-center text-[10px] text-slate-500 text-center p-1 mb-2">
+                                    صورة المترشح
+                                </div>
+                                <div class="w-full h-5 barcode-lines"></div>
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-50 border border-slate-400 p-2.5 rounded text-[11px] space-y-1">
+                            <p class="font-extrabold text-slate-900">تعليمات هامة للمترشح:</p>
+                            <p>• يجب الحضور إلى مؤسسة الإجراء نصف ساعة على الأقل قبل انطلاق كل اختبار مرفوقاً بهذا الاستدعاء وبطاقة التعريف الوطنية أو المدرسية.</p>
+                            <p>• يمنع منعاً باتاً إدخال الهواتف النقالة أو الساعات الذكية أو أي وسيلة اتصال إلى قاعة الامتحان تحت طائلة الإقصاء والمتابعة القانونية.</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="border-2 border-slate-900 p-5 sm:p-6 text-slate-900 leading-relaxed bg-white">
+                    <div class="flex items-start justify-between gap-4 border-b-2 border-slate-900 pb-3 mb-4">
+                        <div class="flex-1 text-center">
+                            <p class="font-extrabold text-sm">الجمهورية الجزائرية الديمقراطية الشعبية</p>
+                            <p class="font-bold text-xs">وزارة التربية الوطنية</p>
+                            <p class="font-bold text-xs text-slate-700 mt-0.5">${c.wilaya || DEFAULT_DIRECTORATE} | ${c.school || DEFAULT_SCHOOL_NAME}</p>
+                            <h2 class="text-base sm:text-lg font-black mt-2 underline underline-offset-4">استمارة التسجيل لامتحان شهادة التعليم المتوسط — دورة جوان 2027</h2>
+                            <p class="text-[11px] font-bold mt-1 text-slate-700">المرجع: المنشور الوزاري رقم 27/و.ت.و/أ.ع المتعلق بتنظيم تسجيلات الامتحانات المدرسية</p>
+                        </div>
+                        ${onecSideLogo}
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4 pb-3 border-b border-dashed border-slate-400">
+                        <div class="space-y-1 text-xs sm:text-sm flex-1">
+                            <div><span class="font-bold">رقم ملف التسجيل:</span> <span class="font-mono font-black text-sm">${c.id}</span></div>
+                            <div><span class="font-bold">الرقم التعريفي الوطني (NIN):</span> <span class="font-mono font-bold">${c.nin}</span></div>
+                            <div><span class="font-bold">وضعية الملف:</span> <span class="font-bold">${c.status}</span></div>
+                        </div>
+                        <div class="w-24 h-28 border-2 border-slate-800 flex flex-col items-center justify-center text-center p-1.5 text-[10px] font-bold text-slate-600 shrink-0">
+                            <span>تلصق هنا</span>
+                            <span>صورة شمسية</span>
+                            <span>حديثة للمترشح</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h3 class="font-black text-xs sm:text-sm bg-slate-100 border-r-4 border-slate-900 px-3 py-1 mb-2.5">أولاً: المعلومات الشخصية للتلميذ (مطابقة لعقد الميلاد)</h3>
+                        <div class="space-y-2 text-xs sm:text-sm pr-2">
+                            <div class="flex flex-wrap gap-x-8 gap-y-1.5">
+                                <div><span class="font-bold">اللقب (بالعربية):</span> <span class="border-b border-dotted border-slate-600 px-2 font-extrabold">${c.lastnameAr}</span></div>
+                                <div><span class="font-bold">الاسم (بالعربية):</span> <span class="border-b border-dotted border-slate-600 px-2 font-extrabold">${c.firstnameAr}</span></div>
+                                <div><span class="font-bold">الجنس:</span> <span class="border-b border-dotted border-slate-600 px-2 font-bold">${c.gender}</span></div>
+                            </div>
+                            <div class="flex flex-wrap gap-x-8 gap-y-1.5">
+                                <div><span class="font-bold">اللقب باللاتينية (NOM):</span> <span class="border-b border-dotted border-slate-600 px-2 font-mono font-bold uppercase">${c.lastnameFr}</span></div>
+                                <div><span class="font-bold">الاسم باللاتينية (PRÉNOM):</span> <span class="border-b border-dotted border-slate-600 px-2 font-mono font-bold uppercase">${c.firstnameFr}</span></div>
+                            </div>
+                            <div class="flex flex-wrap gap-x-8 gap-y-1.5">
+                                <div><span class="font-bold">تاريخ الميلاد:</span> <span class="border-b border-dotted border-slate-600 px-2 font-bold">${c.dob}</span></div>
+                                <div><span class="font-bold">بلدية وولاية الميلاد:</span> <span class="border-b border-dotted border-slate-600 px-2 font-bold">${c.pob}</span></div>
+                            </div>
+                            <div>
+                                <span class="font-bold">العنوان الشخصي الكامل للإقامة:</span> <span class="border-b border-dotted border-slate-600 px-2 font-semibold">${c.address || '................................................................................'}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h3 class="font-black text-xs sm:text-sm bg-slate-100 border-r-4 border-slate-900 px-3 py-1 mb-2.5">ثانياً: معلومات الأولياء والحالة العائلية</h3>
+                        <div class="space-y-2 text-xs sm:text-sm pr-2">
+                            <div class="flex flex-wrap gap-x-8 gap-y-1.5">
+                                <div><span class="font-bold">اسم الأب:</span> <span class="border-b border-dotted border-slate-600 px-2 font-bold">${c.fatherName || '....................................'}</span></div>
+                                <div><span class="font-bold">مهنة الأب:</span> <span class="border-b border-dotted border-slate-600 px-2">${c.fatherJob || '............................'}</span></div>
+                            </div>
+                            <div class="flex flex-wrap gap-x-8 gap-y-1.5">
+                                <div><span class="font-bold">لقب واسم الأم:</span> <span class="border-b border-dotted border-slate-600 px-2 font-bold">${c.motherName || '....................................'}</span></div>
+                                <div><span class="font-bold">مهنة الأم:</span> <span class="border-b border-dotted border-slate-600 px-2">${c.motherJob || '............................'}</span></div>
+                            </div>
+                            <div class="flex flex-wrap gap-x-8 gap-y-1.5">
+                                <div><span class="font-bold">رقم هاتف الولي الشرعي:</span> <span class="border-b border-dotted border-slate-600 px-2 font-mono font-bold">${c.parentPhone || '........................'}</span></div>
+                                <div><span class="font-bold">صفة الممضي على الاستمارة:</span> <span class="border-b border-dotted border-slate-600 px-2">الأب / الأم / الوصي الشرعي</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-5">
+                        <h3 class="font-black text-xs sm:text-sm bg-slate-100 border-r-4 border-slate-900 px-3 py-1 mb-2.5">ثالثاً: التفصيل الدراسي ومؤسسة الإجراء</h3>
+                        <div class="space-y-2 text-xs sm:text-sm pr-2">
+                            <div class="flex flex-wrap gap-x-8 gap-y-1.5">
+                                <div><span class="font-bold">صفة الترشح:</span> <span class="border-b border-dotted border-slate-600 px-2 font-extrabold">${c.type}</span></div>
+                                <div><span class="font-bold">المستوى الدراسي:</span> <span class="border-b border-dotted border-slate-600 px-2 font-bold">السنة الرابعة متوسط (4AM)</span></div>
+                                <div><span class="font-bold">القسم / الفوج التربوي:</span> <span class="border-b border-dotted border-slate-600 px-2 font-bold">${c.classRoom || '4 متوسط'}</span></div>
+                            </div>
+                            <div class="flex flex-wrap gap-x-8 gap-y-1.5">
+                                <div><span class="font-bold">المؤسسة التعليمية الأصلية:</span> <span class="border-b border-dotted border-slate-600 px-2 font-bold">${c.school || DEFAULT_SCHOOL_NAME}</span></div>
+                                <div><span class="font-bold">رقم القيد في سجل الدخول:</span> <span class="border-b border-dotted border-slate-600 px-2 font-mono">${c.regBookNo || '............'}</span></div>
+                            </div>
+                            <div>
+                                <span class="font-bold">مؤسسة الإجراء (مركز إجراء الامتحان):</span> <span class="border-b border-dotted border-slate-600 px-2 font-extrabold text-slate-900">${c.centerName || 'غير معيّنة بعد'}</span>
+                            </div>
+                            <div class="flex flex-wrap gap-x-8 gap-y-1.5">
+                                <div><span class="font-bold">وضعية اللغة الأمازيغية:</span> <span class="border-b border-dotted border-slate-600 px-2 font-bold">${c.amazigh}</span></div>
+                                <div><span class="font-bold">التربية البدنية والرياضية:</span> <span class="border-b border-dotted border-slate-600 px-2 font-bold">${c.sport}</span></div>
+                            </div>
+                            <div class="flex flex-wrap gap-x-8 gap-y-1.5">
+                                <div><span class="font-bold">حقوق التسجيل (حوالة بريد الجزائر):</span> <span class="border-b border-dotted border-slate-600 px-2 font-bold">${c.fee}</span></div>
+                                <div><span class="font-bold">رقم وصل الدفع:</span> <span class="border-b border-dotted border-slate-600 px-2 font-mono">${c.receiptNo || '................'}</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-3 border-t-2 border-slate-900 grid grid-cols-3 gap-4 text-xs text-center">
+                        <div>
+                            <p class="font-extrabold">إمضاء التلميذ المترشح</p>
+                            <p class="text-[11px] text-slate-600 mt-1">أشهد بصحة المعلومات المدونة أعلاه</p>
+                            <div class="h-12"></div>
+                        </div>
+                        <div>
+                            <p class="font-extrabold">إمضاء ولي الأمر</p>
+                            <p class="text-[11px] text-slate-600 mt-1">المصادقة العائلية على البيانات</p>
+                            <div class="h-12"></div>
+                        </div>
+                        <div>
+                            <p class="font-extrabold">ختم وإمضاء مدير المؤسسة</p>
+                            <p class="text-[11px] text-slate-600 mt-1">${c.school || DEFAULT_SCHOOL_NAME}</p>
+                            <div class="h-12"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderOfficialDocument(candidateObj, docType = 'FORM') {
+            const printArea = document.getElementById('print-area');
+            const container = document.getElementById('printable-document');
+            if (!printArea || !container || !candidateObj) return;
+
+            container.innerHTML = buildOfficialDocumentHtml(candidateObj, docType);
+            printArea.classList.remove('hidden');
+        }
+
+        function openA4PrintFallbackWindow(htmlContent, titleText) {
+            try {
+                const win = window.open('', '_blank', 'width=850,height=1120');
+                if (!win) {
+                    showToast('يرجى السماح بفتح نوافذ الطباعة من المتصفح لإتمام طباعة A4.', 'info');
+                    return;
+                }
+                win.document.open();
+                win.document.write(`
+                    <!DOCTYPE html>
+                    <html lang="ar" dir="rtl">
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>${titleText}</title>
+                        <script src="https://cdn.tailwindcss.com"><\/script>
+                        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+                        <style>
+                            @page { size: A4 portrait; margin: 10mm; }
+                            html, body {
+                                width: 210mm;
+                                margin: 0 auto;
+                                padding: 0;
+                                background: #ffffff;
+                                font-family: 'Cairo', sans-serif;
+                            }
+                            .sheet {
+                                width: 190mm;
+                                margin: 0 auto;
+                                padding: 4mm 0;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="sheet">${htmlContent}</div>
+                    </body>
+                    </html>
+                `);
+                win.document.close();
+                win.focus();
+                setTimeout(() => {
+                    try {
+                        win.print();
+                    } catch (_) {}
+                }, 350);
+            } catch (err) {
+                showToast('تعذر فتح نافذة الطباعة A4.', 'error');
+            }
+        }
+
+        function triggerOfficialPrint(candidateObj, docType = 'FORM') {
+            renderOfficialDocument(candidateObj, docType);
+            const docHtml = buildOfficialDocumentHtml(candidateObj, docType);
+
+            const afterPrintCleanup = () => {
+                const printArea = document.getElementById('print-area');
+                if (printArea) {
+                    printArea.classList.add('hidden');
+                }
+                window.removeEventListener('afterprint', afterPrintCleanup);
+            };
+            window.addEventListener('afterprint', afterPrintCleanup);
+
+            requestAnimationFrame(() => {
+                try {
+                    window.print();
+                } catch (err) {
+                    openA4PrintFallbackWindow(docHtml, `استمارة_التسجيل_${candidateObj.id}`);
+                    afterPrintCleanup();
+                }
+                setTimeout(() => {
+                    const printArea = document.getElementById('print-area');
+                    if (printArea && !printArea.classList.contains('hidden')) {
+                        printArea.classList.add('hidden');
+                    }
+                }, 1500);
+            });
+        }
+
+        // ==========================================
+        // 10. SETTINGS & TOAST NOTIFICATIONS
+        // ==========================================
+        function togglePlatformStatus() {
+            platformOpen = !platformOpen;
+            const btn = document.getElementById('btn-toggle-platform');
+            const badge = document.getElementById('platform-status-badge');
+
+            if (platformOpen) {
+                if (btn) {
+                    btn.textContent = 'مفتوحة للمعالجة';
+                    btn.className = 'px-3 py-1.5 bg-dzGreen text-white text-xs font-bold rounded-lg transition';
+                }
+                if (badge) {
+                    badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> المرحلة الأولى مفتوحة - الحفظ الآلي الدائم مفعل`;
+                }
+                showToast('المرحلة الأولى مفتوحة للمعالجة والحفظ الآلي.', 'success');
+            } else {
+                if (btn) {
+                    btn.textContent = 'مقيدة مؤقتاً';
+                    btn.className = 'px-3 py-1.5 bg-dzRed text-white text-xs font-bold rounded-lg transition';
+                }
+                if (badge) {
+                    badge.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-400"></span> المرحلة الأولى مقيدة مؤقتاً`;
+                }
+                showToast('تم تقييد المرحلة الأولى مؤقتاً.', 'info');
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            try {
+                const container = document.getElementById('toast-container');
+                if (!container) return;
+                const toast = document.createElement('div');
+                const colors = {
+                    success: 'bg-dzGreen text-white border-emerald-400',
+                    error: 'bg-dzRed text-white border-red-400',
+                    info: 'bg-slate-800 text-white border-slate-600'
+                };
+                const icons = {
+                    success: 'fa-circle-check',
+                    error: 'fa-circle-exclamation',
+                    info: 'fa-circle-info'
+                };
+
+                toast.className = `${colors[type] || colors.info} border-r-4 px-4 py-3 rounded-xl shadow-lg text-xs sm:text-sm font-bold flex items-center gap-2.5 transform transition-all duration-300 translate-y-2 opacity-0 max-w-md`;
+                toast.innerHTML = `<i class="fa-solid ${icons[type] || icons.info} text-base"></i> <span>${message}</span>`;
+                container.appendChild(toast);
+
+                requestAnimationFrame(() => {
+                    toast.classList.remove('translate-y-2', 'opacity-0');
+                });
+
+                setTimeout(() => {
+                    toast.classList.add('opacity-0', 'translate-y-2');
+                    setTimeout(() => toast.remove(), 300);
+                }, 3500);
+            } catch (err) {
+                // Silent fail
+            }
+        }
+
+        // ==========================================
+        // 11. INITIALIZATION
+        // ==========================================
+        function refreshAllViews() {
+            renderDashboard();
+            renderCandidatesTable();
+            renderAuditTab();
+            renderCentersTab();
+            populateExamCenterSelects();
+            const indicator = document.getElementById('autosave-indicator');
+            if (indicator) {
+                indicator.innerHTML = `<i class="fa-solid fa-cloud-check text-emerald-600"></i> <span>محفوظ آلياً (${candidates.length})</span>`;
+            }
+        }
+
+        function initPlatform() {
+            candidates = safeLoadCandidates();
+            examCenters = safeLoadExamCenters();
+            refreshAllViews();
+            switchTab('candidates');
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initPlatform);
+        } else {
+            initPlatform();
+        }
+    </script>
+</body>
+</html>
